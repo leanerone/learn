@@ -1,0 +1,1279 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>AI 工具实战课 · MCP / Skill / Agent · EAP 工程师专版</title>
+<style>
+  :root{
+    --bg:#0b1020;
+    --bg-soft:#121933;
+    --card:#161e3f;
+    --line:#27305a;
+    --txt:#e8ecff;
+    --muted:#9aa4d3;
+    --acc:#7aa2ff;
+    --acc-2:#9d7bff;
+    --green:#3ddc97;
+    --orange:#ffb86b;
+    --pink:#ff7ab6;
+    --yellow:#ffe27a;
+    --radius:14px;
+    --shadow:0 10px 30px rgba(0,0,0,.35);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--txt);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",Helvetica,Arial,sans-serif;line-height:1.55;-webkit-font-smoothing:antialiased}
+  a{color:var(--acc);text-decoration:none}
+  a:hover{text-decoration:underline}
+
+  /* ---------- 顶部工具栏 ---------- */
+  .topbar{
+    position:sticky;top:0;z-index:50;display:flex;align-items:center;gap:14px;
+    padding:12px 22px;background:rgba(11,16,32,.85);backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line);
+  }
+  .brand{font-weight:700;font-size:15px;letter-spacing:.5px}
+  .brand .dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--green);margin-right:8px;box-shadow:0 0 12px var(--green)}
+  .topbar .spacer{flex:1}
+  .mode-switch{display:flex;gap:6px;background:var(--bg-soft);padding:4px;border-radius:10px;border:1px solid var(--line)}
+  .mode-switch button{
+    background:transparent;color:var(--muted);border:0;padding:6px 12px;border-radius:7px;cursor:pointer;font-size:13px;
+  }
+  .mode-switch button.active{background:linear-gradient(135deg,var(--acc),var(--acc-2));color:#fff;font-weight:600}
+  .progress{font-size:12px;color:var(--muted);min-width:90px;text-align:right}
+
+  /* ---------- 主体布局 ---------- */
+  .layout{display:grid;grid-template-columns:280px 1fr;min-height:calc(100vh - 56px)}
+  nav.toc{padding:22px 16px;border-right:1px solid var(--line);background:#0d1430;position:sticky;top:56px;height:calc(100vh - 56px);overflow:auto}
+  nav.toc h3{font-size:12px;letter-spacing:2px;color:var(--muted);margin:6px 0 12px;text-transform:uppercase}
+  nav.toc a{display:flex;gap:10px;align-items:center;color:var(--txt);padding:8px 10px;border-radius:8px;font-size:14px;margin-bottom:2px;border:1px solid transparent}
+  nav.toc a:hover{background:var(--bg-soft);text-decoration:none;border-color:var(--line)}
+  nav.toc a .num{font-size:11px;color:var(--muted);width:22px}
+  nav.toc a.active{background:linear-gradient(135deg,rgba(122,162,255,.18),rgba(157,123,255,.12));border-color:var(--acc);color:#fff}
+
+  main{padding:36px 48px 80px;max-width:1180px}
+  section{padding:48px 0 64px;border-bottom:1px dashed var(--line);scroll-margin-top:80px}
+  section:last-child{border-bottom:0}
+  h1{font-size:34px;margin:0 0 14px;line-height:1.25}
+  h2{font-size:26px;margin:0 0 18px;line-height:1.3;color:#fff}
+  h3{font-size:18px;margin:24px 0 10px;color:var(--acc)}
+  p{margin:8px 0 14px;color:#d6dcff}
+  .lead{font-size:16px;color:var(--muted);max-width:760px}
+  .tag{display:inline-block;font-size:11px;padding:3px 8px;border-radius:999px;background:rgba(122,162,255,.12);color:var(--acc);border:1px solid rgba(122,162,255,.35);margin-right:6px}
+  .tag.warn{background:rgba(255,184,107,.12);color:var(--orange);border-color:rgba(255,184,107,.4)}
+  .tag.ok{background:rgba(61,220,151,.12);color:var(--green);border-color:rgba(61,220,151,.4)}
+  .tag.pink{background:rgba(255,122,182,.12);color:var(--pink);border-color:rgba(255,122,182,.4)}
+
+  .grid{display:grid;gap:18px}
+  .grid-2{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .grid-3{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .grid-4{grid-template-columns:repeat(4,minmax(0,1fr))}
+  @media (max-width:960px){.layout{grid-template-columns:1fr}nav.toc{position:relative;height:auto;top:0}main{padding:24px}}
+
+  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow)}
+  .card h4{margin:0 0 8px;font-size:15px;color:#fff}
+  .card p{margin:0;font-size:14px;color:#c5cbee}
+
+  .diagram{
+    background:linear-gradient(180deg,#0e1740,#0a1130);
+    border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px;margin:18px 0;overflow:auto;
+  }
+  .row{display:flex;gap:14px;flex-wrap:wrap;align-items:center;justify-content:center}
+  .node{
+    background:#1a2350;border:1px solid var(--line);
+    border-radius:12px;padding:14px 16px;min-width:160px;text-align:center;
+    box-shadow:0 6px 18px rgba(0,0,0,.3);
+  }
+  .node b{color:#fff;display:block;margin-bottom:4px;font-size:14px}
+  .node small{color:var(--muted);font-size:12px}
+  .node.user{background:linear-gradient(135deg,#1f2a5c,#2b3a82)}
+  .node.model{background:linear-gradient(135deg,#3b2a82,#5a2b82)}
+  .node.skill{background:linear-gradient(135deg,#2a5a3a,#1f7a5a)}
+  .node.mcp{background:linear-gradient(135deg,#7a4b1f,#a06820)}
+  .node.tool{background:linear-gradient(135deg,#5a2a4a,#7a2a5a)}
+  .arrow{display:inline-flex;align-items:center;color:var(--muted);font-size:22px;padding:0 4px}
+
+  pre{background:#0a1130;border:1px solid var(--line);border-radius:10px;padding:14px 16px;overflow:auto;font-size:13px;line-height:1.55;color:#dfe5ff}
+  code{font-family:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace}
+  :not(pre) > code{background:#0a1130;padding:2px 6px;border-radius:5px;border:1px solid var(--line);font-size:.92em;color:#cfd6ff}
+
+  .steps{counter-reset:step;margin:12px 0;padding:0;list-style:none}
+  .steps li{counter-increment:step;position:relative;padding:12px 14px 12px 50px;background:var(--card);border:1px solid var(--line);border-radius:10px;margin-bottom:10px}
+  .steps li::before{content:counter(step);position:absolute;left:14px;top:12px;width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--acc),var(--acc-2));color:#fff;font-weight:700;display:flex;align-items:center;justify-content:center;font-size:13px}
+
+  .checklist{list-style:none;padding:0;margin:10px 0}
+  .checklist li{padding:8px 12px 8px 36px;position:relative;border:1px solid var(--line);background:var(--card);border-radius:8px;margin-bottom:8px;font-size:14px}
+  .checklist li::before{content:"✓";position:absolute;left:12px;top:8px;color:var(--green);font-weight:700}
+
+  table{width:100%;border-collapse:collapse;margin:14px 0;font-size:14px}
+  th,td{padding:10px 12px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+  th{color:var(--muted);font-weight:600;background:#0d1430}
+
+  .video-card{display:flex;gap:14px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:12px;align-items:flex-start}
+  .video-card .badge{background:linear-gradient(135deg,#ff4d4d,#ff7a4d);color:#fff;font-size:11px;padding:3px 8px;border-radius:6px;font-weight:700}
+  .video-card .meta{font-size:12px;color:var(--muted);margin-top:4px}
+  .video-card h5{margin:0 0 4px;font-size:15px;color:#fff}
+  .video-card p{margin:0;font-size:13px;color:#c5cbee}
+
+  /* ---------- PPT 模式 ---------- */
+  body.ppt-mode .layout{grid-template-columns:1fr}
+  body.ppt-mode nav.toc{display:none}
+  body.ppt-mode main{max-width:none;padding:0;height:calc(100vh - 56px);overflow:hidden;position:relative}
+  body.ppt-mode section{
+    border:0;padding:0;margin:0;display:none;
+    height:calc(100vh - 56px);width:100vw;position:absolute;inset:0;
+    padding:60px 80px;overflow:auto;
+    background:radial-gradient(circle at 20% 20%, #1a2350 0%, #0b1020 60%);
+  }
+  body.ppt-mode section.active{display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center}
+  body.ppt-mode section.active h1{font-size:54px}
+  body.ppt-mode section.active h2{font-size:40px;margin-bottom:24px}
+  body.ppt-mode section.active p,.lead{font-size:20px;max-width:1000px}
+  body.ppt-mode .diagram{transform:scale(1.15)}
+  body.ppt-mode .ppt-tip{
+    position:fixed;left:0;right:0;bottom:18px;text-align:center;color:var(--muted);font-size:13px;z-index:60;
+  }
+  body.ppt-mode .ppt-nav{
+    position:fixed;right:24px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:10px;z-index:60;
+  }
+  body.ppt-mode .ppt-nav button{
+    width:44px;height:44px;border-radius:50%;border:1px solid var(--line);background:var(--card);cursor:pointer;color:var(--txt);font-size:18px;
+  }
+  body.ppt-mode .ppt-nav button:hover{background:var(--acc);color:#fff;border-color:var(--acc);transform:scale(1.1)}
+  body.ppt-mode .ppt-nav button:active{transform:scale(.92)}
+  @keyframes fade-in{to{opacity:1}}
+
+  /* ---------- 顶部进度条 ---------- */
+  .topbar::after{content:"";position:absolute;left:0;bottom:-1px;height:2px;background:linear-gradient(90deg,var(--acc),var(--pink),var(--green));width:0%;transition:width .35s cubic-bezier(.2,.7,.2,1)}
+
+  footer{padding:30px;text-align:center;color:var(--muted);font-size:13px}
+
+  /* ============ 动画增强库 ============ */
+
+  /* ---------- 背景动效:浮动光斑 ---------- */
+  body::before,body::after{
+    content:"";position:fixed;border-radius:50%;filter:blur(80px);opacity:.4;z-index:-1;
+    pointer-events:none;
+  }
+  body::before{
+    width:520px;height:520px;background:radial-gradient(circle,#7aa2ff,transparent 70%);
+    top:-120px;left:-120px;animation:float-a 18s ease-in-out infinite;
+  }
+  body::after{
+    width:480px;height:480px;background:radial-gradient(circle,#9d7bff,transparent 70%);
+    bottom:-150px;right:-120px;animation:float-b 22s ease-in-out infinite;
+  }
+  @keyframes float-a{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(80px,60px) scale(1.15)}}
+  @keyframes float-b{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(-70px,-50px) scale(1.1)}}
+
+  /* ---------- Hero 旋转光晕 ---------- */
+  .hero{position:relative;overflow:hidden}
+  .hero::before{
+    content:"";position:absolute;inset:-50%;
+    background:conic-gradient(from 0deg, transparent 0deg, rgba(122,162,255,.25) 60deg, transparent 120deg);
+    animation:spin 14s linear infinite;pointer-events:none;
+  }
+  .hero > *{position:relative;z-index:1}
+  @keyframes spin{to{transform:rotate(360deg)}}
+
+  /* ---------- 章节大图 ---------- */
+  .hero-img{
+    width:100%;height:240px;border-radius:var(--radius);overflow:hidden;
+    border:1px solid var(--line);margin:8px 0 24px;position:relative;
+    box-shadow:0 14px 40px rgba(0,0,0,.45);
+    background:#0a1130;
+  }
+  .hero-img img{width:100%;height:100%;object-fit:cover;display:block;transition:transform 8s ease;opacity:0}
+  .hero-img img.loaded{opacity:1;transition:opacity .8s}
+  .hero-img:hover img{transform:scale(1.06)}
+  .hero-img::after{
+    content:"";position:absolute;inset:0;
+    background:linear-gradient(180deg,transparent 40%,rgba(11,16,32,.75));
+    pointer-events:none;
+  }
+  .hero-img .caption{
+    position:absolute;left:18px;bottom:14px;font-size:12px;color:#cfd6ff;
+    background:rgba(11,16,32,.65);padding:4px 10px;border-radius:999px;border:1px solid var(--line);
+    z-index:2;backdrop-filter:blur(6px);
+  }
+  .hero-img .skeleton{
+    position:absolute;inset:0;background:linear-gradient(90deg,#0a1130 0%,#1a2350 50%,#0a1130 100%);
+    background-size:200% 100%;animation:skeleton 1.4s linear infinite;
+  }
+  @keyframes skeleton{to{background-position:-200% 0}}
+
+  /* ---------- 入场动画 ---------- */
+  .reveal{opacity:0;transform:translateY(28px);transition:opacity .9s cubic-bezier(.2,.7,.2,1),transform .9s cubic-bezier(.2,.7,.2,1)}
+  .reveal.in{opacity:1;transform:none}
+  .reveal.delay-1{transition-delay:.08s}
+  .reveal.delay-2{transition-delay:.16s}
+  .reveal.delay-3{transition-delay:.24s}
+  .reveal.delay-4{transition-delay:.32s}
+  @keyframes title-in{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}
+
+  /* ---------- 卡片 hover ---------- */
+  .card{transition:transform .35s cubic-bezier(.2,.7,.2,1),box-shadow .25s,border-color .25s}
+  .card:hover{transform:translateY(-6px) scale(1.01);border-color:rgba(122,162,255,.5);box-shadow:0 18px 40px rgba(0,0,0,.5),0 0 0 1px rgba(122,162,255,.2)}
+  .video-card{transition:transform .3s,border-color .3s}
+  .video-card:hover{transform:translateX(4px);border-color:rgba(255,122,122,.5)}
+
+  /* ---------- 节点入场 + 心跳 ---------- */
+  .node{transition:transform .35s,filter .35s;animation:node-in .6s cubic-bezier(.2,.7,.2,1) backwards}
+  .node:nth-child(1){animation-delay:.05s}
+  .node:nth-child(3){animation-delay:.15s}
+  .node:nth-child(5){animation-delay:.25s}
+  .node:nth-child(7){animation-delay:.35s}
+  .node:nth-child(9){animation-delay:.45s}
+  .node:hover{transform:translateY(-4px) scale(1.05);filter:brightness(1.15);z-index:2}
+  @keyframes node-in{from{opacity:0;transform:translateY(15px) scale(.95)}to{opacity:1;transform:none}}
+  @keyframes pulse-ring{
+    0%{box-shadow:0 0 0 0 rgba(122,162,255,.55)}
+    70%{box-shadow:0 0 0 14px rgba(122,162,255,0)}
+    100%{box-shadow:0 0 0 0 rgba(122,162,255,0)}
+  }
+  .node.heartbeat{animation:node-in .6s cubic-bezier(.2,.7,.2,1) backwards,pulse-ring 2.4s infinite .8s}
+
+  /* ---------- 流程箭头流动 ---------- */
+  .arrow{
+    background:linear-gradient(90deg,transparent,var(--acc) 50%,transparent);
+    background-size:200% 100%;
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+    animation:flow 2.6s linear infinite;
+  }
+  @keyframes flow{to{background-position:-200% 0}}
+
+  /* ---------- TOC 平滑 ---------- */
+  nav.toc a{transition:background .25s,border-color .25s,color .25s,transform .2s}
+  nav.toc a:hover{transform:translateX(4px)}
+
+  /* ---------- 步骤弹跳 ---------- */
+  .steps li{transition:transform .3s}
+  .steps li:hover{transform:translateX(4px)}
+  .steps li::before{animation:pop-in .6s cubic-bezier(.5,1.5,.5,1) backwards}
+  .steps li:nth-child(1)::before{animation-delay:.05s}
+  .steps li:nth-child(2)::before{animation-delay:.15s}
+  .steps li:nth-child(3)::before{animation-delay:.25s}
+  .steps li:nth-child(4)::before{animation-delay:.35s}
+  .steps li:nth-child(5)::before{animation-delay:.45s}
+  .steps li:nth-child(6)::before{animation-delay:.55s}
+  @keyframes pop-in{from{transform:scale(.3);opacity:0}to{transform:scale(1);opacity:1}}
+
+  /* ---------- 代码块 hover ---------- */
+  pre{transition:border-color .3s}
+  pre:hover{border-color:rgba(122,162,255,.5)}
+
+  /* ---------- 表格行 hover ---------- */
+  tbody tr{transition:background .2s}
+  tbody tr:hover{background:rgba(122,162,255,.06)}
+
+  /* ---------- 标签 ---------- */
+  .tag{transition:transform .2s;display:inline-block}
+  .tag:hover{transform:scale(1.05)}
+
+  /* ---------- 顶部 logo ---------- */
+  .brand .dot{animation:dot-pulse 2.2s ease-in-out infinite}
+  @keyframes dot-pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.4)}}
+
+  /* ---------- 模式按钮 ---------- */
+  .mode-switch button{transition:background .2s,color .2s,transform .15s}
+  .mode-switch button:hover{transform:translateY(-1px)}
+
+  /* ---------- 滚动指示 ---------- */
+  @keyframes bounce-down{0%,100%{transform:translateY(0)}50%{transform:translateY(8px)}}
+  .scroll-hint{animation:bounce-down 2s ease-in-out infinite;color:var(--muted);font-size:12px;text-align:center;margin-top:18px}
+
+  /* ---------- PPT 翻页动画 ---------- */
+  body.ppt-mode .layout{grid-template-columns:1fr}
+  body.ppt-mode nav.toc{display:none}
+  body.ppt-mode main{max-width:none;padding:0;height:calc(100vh - 56px);overflow:hidden;position:relative}
+  body.ppt-mode section{
+    border:0;padding:60px 80px;margin:0;
+    height:calc(100vh - 56px);width:100vw;position:absolute;inset:0;
+    overflow:auto;background:radial-gradient(circle at 20% 20%, #1a2350 0%, #0b1020 60%);
+    opacity:0;visibility:hidden;transform:translateX(60px) scale(.97);
+    transition:opacity .55s cubic-bezier(.2,.7,.2,1),transform .55s cubic-bezier(.2,.7,.2,1),visibility 0s linear .55s;
+  }
+  body.ppt-mode section.active{
+    opacity:1;visibility:visible;transform:translateX(0) scale(1);
+    transition:opacity .55s cubic-bezier(.2,.7,.2,1),transform .55s cubic-bezier(.2,.7,.2,1),visibility 0s linear 0s;
+    display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;
+  }
+  body.ppt-mode section.active h1{font-size:54px;animation:title-in .7s cubic-bezier(.2,.7,.2,1) backwards}
+  body.ppt-mode section.active h2{font-size:40px;margin-bottom:24px;animation:title-in .7s cubic-bezier(.2,.7,.2,1) .05s backwards}
+  body.ppt-mode section.active p,.lead{font-size:20px;max-width:1000px;animation:title-in .7s cubic-bezier(.2,.7,.2,1) .15s backwards}
+  body.ppt-mode section.active .card,body.ppt-mode section.active .diagram,body.ppt-mode section.active .hero-img{animation:title-in .8s cubic-bezier(.2,.7,.2,1) .25s backwards}
+  body.ppt-mode section.active .diagram{transform:scale(1.15)}
+  body.ppt-mode .ppt-tip{
+    position:fixed;left:0;right:0;bottom:18px;text-align:center;color:var(--muted);font-size:13px;z-index:60;
+    opacity:0;animation:fade-in .6s .4s forwards;
+  }
+  body.ppt-mode .ppt-nav{
+    position:fixed;right:24px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:10px;z-index:60;
+    opacity:0;animation:fade-in .6s .3s forwards;
+  }
+  body.ppt-mode .ppt-nav button{
+    width:44px;height:44px;border-radius:50%;border:1px solid var(--line);background:var(--card);cursor:pointer;color:var(--txt);font-size:18px;
+    transition:transform .2s,background .2s,border-color .2s;
+  }
+  body.ppt-mode .ppt-nav button:hover{background:var(--acc);color:#fff;border-color:var(--acc);transform:scale(1.1)}
+  body.ppt-mode .ppt-nav button:active{transform:scale(.92)}
+
+  /* ---------- 缩放(可访问性) ---------- */
+  @media (prefers-reduced-motion: reduce){
+    *,*::before,*::after{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important}
+  }
+
+  /* ============ 亮色主题 ============ */
+  body.light{
+    --bg:#f5f7ff;
+    --bg-soft:#e9eeff;
+    --card:#ffffff;
+    --line:#d6dcf0;
+    --txt:#1a234a;
+    --muted:#5a6791;
+    --acc:#4d6ef5;
+    --acc-2:#7e3df0;
+    --green:#0ea067;
+    --orange:#d4811b;
+    --pink:#d8378a;
+  }
+  body.light .topbar{background:rgba(245,247,255,.85);border-color:var(--line)}
+  body.light nav.toc{background:#eef2ff;border-color:var(--line)}
+  body.light .node{background:#eef2ff;color:var(--txt);border-color:var(--line)}
+  body.light .node.user{background:linear-gradient(135deg,#cfd9ff,#a3b6ff)}
+  body.light .node.model{background:linear-gradient(135deg,#bda3ff,#cf94ff)}
+  body.light .node.skill{background:linear-gradient(135deg,#a3e6c5,#7dd8af)}
+  body.light .node.mcp{background:linear-gradient(135deg,#ffd6a3,#ffbe7d)}
+  body.light .node.tool{background:linear-gradient(135deg,#ffa3d2,#ff7dc5)}
+  body.light pre,body.light code{background:#eef2ff;color:#1a234a;border-color:var(--line)}
+  body.light th{background:#eef2ff}
+  body.light .hero-img::after{background:linear-gradient(180deg,transparent 40%,rgba(245,247,255,.85))}
+  body.light .hero-img .caption{background:rgba(255,255,255,.7);color:var(--txt);border-color:var(--line)}
+  body.light .brand .dot{box-shadow:0 0 10px var(--green)}
+
+  /* ============ 打印讲义模式 ============ */
+  body.print-mode{
+    background:#fff !important;color:#000 !important;
+  }
+  body.print-mode::before,body.print-mode::after{display:none !important}
+  body.print-mode .topbar,body.print-mode nav.toc,body.print-mode .ppt-nav,body.print-mode .ppt-tip{display:none !important}
+  body.print-mode .layout{grid-template-columns:1fr !important;display:block !important}
+  body.print-mode main{max-width:780px !important;margin:0 auto !important;padding:24px 32px !important}
+  body.print-mode section{
+    display:block !important;position:relative !important;
+    width:auto !important;height:auto !important;padding:24px 0 !important;
+    opacity:1 !important;transform:none !important;visibility:visible !important;
+    background:#fff !important;color:#000 !important;
+    border-bottom:2px solid #333 !important;page-break-after:always;
+    break-after:page;
+  }
+  body.print-mode .hero-img{display:none !important}
+  body.print-mode h1,body.print-mode h2{color:#000 !important;font-size:22px !important}
+  body.print-mode .card,body.print-mode pre,body.print-mode .diagram,body.print-mode .video-card{
+    background:#fff !important;border:1px solid #999 !important;color:#000 !important;box-shadow:none !important;
+    break-inside:avoid;
+  }
+  body.print-mode .diagram{transform:none !important}
+  body.print-mode .node{background:#fff !important;color:#000 !important;border:1px solid #666 !important}
+  body.print-mode .steps li::before{background:#4d6ef5 !important}
+  body.print-mode .tag{background:#f0f3ff !important;color:#333 !important;border:1px solid #999 !important}
+  body.print-mode .reveal{opacity:1 !important;transform:none !important}
+  body.print-mode .grid,.grid-2,.grid-3,.grid-4{grid-template-columns:1fr 1fr !important}
+  body.print-mode::before{
+    content:"AI 工具实战课 · EAP 工程师专版 · 打印讲义";
+    display:block;text-align:center;font-size:11px;color:#666;
+    padding:8px;border-bottom:1px solid #999;
+  }
+
+  /* ============ 移动端适配 ============ */
+  @media (max-width:768px){
+    .topbar{padding:10px 14px;flex-wrap:wrap;gap:8px}
+    .brand{font-size:13px}
+    .mode-switch button{padding:5px 9px;font-size:12px}
+    .progress{font-size:11px;min-width:60px}
+    .layout{grid-template-columns:1fr}
+    nav.toc{
+      position:relative;top:0;height:auto;
+      display:flex;gap:6px;overflow-x:auto;padding:12px;
+      white-space:nowrap;border-right:0;border-bottom:1px solid var(--line);
+    }
+    nav.toc h3{display:none}
+    nav.toc a{flex-shrink:0;padding:6px 10px;font-size:12px}
+    nav.toc a .num{display:none}
+    main{padding:20px 16px 60px}
+    section{padding:28px 0 40px}
+    h1{font-size:24px}
+    h2{font-size:20px}
+    .hero-img{height:180px}
+    .grid-2,.grid-3,.grid-4{grid-template-columns:1fr}
+    .diagram{padding:14px}
+    .node{min-width:120px;padding:10px 12px;font-size:13px}
+    .arrow{font-size:18px;padding:0 2px}
+    body.ppt-mode section{padding:30px 20px}
+    body.ppt-mode section.active h1{font-size:32px}
+    body.ppt-mode section.active h2{font-size:24px}
+    body.ppt-mode section.active p,.lead{font-size:15px}
+    body.ppt-mode .diagram{transform:none !important}
+    body.ppt-mode .ppt-nav{right:10px;gap:6px}
+    body.ppt-mode .ppt-nav button{width:36px;height:36px;font-size:14px}
+  }
+  @media (max-width:480px){
+    .hero-img{height:150px}
+    .mode-switch{flex:1}
+  }
+
+  /* 顶栏新按钮 */
+  .topbar-btn{
+    background:var(--bg-soft);color:var(--muted);border:1px solid var(--line);
+    padding:6px 10px;border-radius:7px;cursor:pointer;font-size:13px;
+    transition:background .2s,color .2s,transform .15s;
+  }
+  .topbar-btn:hover{color:var(--txt);transform:translateY(-1px)}
+  .topbar-btn.active{background:linear-gradient(135deg,var(--acc),var(--acc-2));color:#fff;border-color:transparent}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand"><span class="dot"></span>AI 工具实战课 · EAP 工程师专版</div>
+  <div class="spacer"></div>
+  <div class="mode-switch" role="tablist" aria-label="模式切换">
+    <button data-mode="doc" class="active" id="mode-doc">📖 自学模式</button>
+    <button data-mode="ppt" id="mode-ppt">🎯 讲解模式 (PPT)</button>
+  </div>
+  <button class="topbar-btn" id="themeBtn" title="切换亮/暗主题">🌙 暗</button>
+  <button class="topbar-btn" id="soundBtn" title="翻页提示音">🔊 音</button>
+  <button class="topbar-btn" id="printBtn" title="打印为讲义 PDF">🖨 打印</button>
+  <div class="progress" id="progress">目录 1 / 10</div>
+</div>
+
+<div class="layout">
+  <nav class="toc" id="toc">
+    <h3>课程目录</h3>
+    <a href="#sec1" data-num="01"><span class="num">01</span>你脑子里的乱线团</a>
+    <a href="#sec2" data-num="02"><span class="num">02</span>一张图看懂 MCP / Skill / Agent</a>
+    <a href="#sec3" data-num="03"><span class="num">03</span>三大工具定位(DSH / Codex / VS Code)</a>
+    <a href="#sec4" data-num="04"><span class="num">04</span>DeepSeek Harness 入门与插件</a>
+    <a href="#sec5" data-num="05"><span class="num">05</span>Codex / Codex CLI 入门</a>
+    <a href="#sec6" data-num="06"><span class="num">06</span>VS Code + GitHub Copilot 工作台</a>
+    <a href="#sec7" data-num="07"><span class="num">07</span>EAP 场景实战剧本</a>
+    <a href="#sec8" data-num="08"><span class="num">08</span>从问答阶段 → 自动化工作流</a>
+    <a href="#sec9" data-num="09"><span class="num">09</span>推荐视频 & 文档清单</a>
+    <a href="#sec10" data-num="10"><span class="num">10</span>30 天落地计划</a>
+  </nav>
+
+  <main id="content">
+
+    <section id="sec1">
+      <div class="hero-img reveal">
+        <div class="skeleton"></div>
+        <img loading="lazy" alt="AI 工具分类" src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=futuristic%20minimal%20illustration%2C%20three%20connected%20nodes%20representing%20AI%20chat%20assistant%2C%20AI%20code%20editor%20and%20AI%20autonomous%20agent%2C%20glowing%20neon%20blue%20purple%20and%20green%2C%20dark%20background%2C%20clean%20modern%20isometric%20style%2C%20soft%20light%20rays&image_size=landscape_16_9" onload="this.classList.add('loaded');this.previousElementSibling.remove()" />
+        <span class="caption">三种 AI 形态：对话 / 工具 / 智能体</span>
+      </div>
+      <span class="tag">先正名</span>
+      <h1 class="reveal">你脑子里的乱线团，其实只有 <span style="color:var(--green)">三层</span></h1>
+      <p class="lead">
+        你不是不会用 AI，而是没分清<strong>"对话里的 AI"</strong>和<strong>"能干活的 AI"</strong>。
+        本节我们一次性把脑子里混乱的词理清楚。
+      </p>
+
+      <div class="grid grid-3">
+        <div class="card"><h4>① 对话型</h4><p>ChatGPT 网页、DeepSeek 网页、Qwen 网页 —— 你打字，它回字，本质是"问答机器人"。</p></div>
+        <div class="card"><h4>② 工具型</h4><p>VS Code + Copilot、Codex CLI、Cursor —— AI 直接进入编辑器，<b>读写你电脑上的文件</b>，是"程序员助手"。</p></div>
+        <div class="card"><h4>③ 智能体型</h4><p>Trae、DeepSeek Harness、智能体工作台 —— AI 能自己规划步骤、调用工具、执行多步任务，是"数字员工"。</p></div>
+      </div>
+
+      <h3>三个最容易混淆的概念</h3>
+      <table>
+        <tr><th>词</th><th>一句话定义</th><th>谁提供能力</th><th>类比</th></tr>
+        <tr><td><b>MCP</b> (Model Context Protocol)</td><td>让 AI 能"打电话给外部工具"的<b>通信协议</b></td><td>Anthropic 主导，多家支持</td><td>USB 接口 —— 统一插头规格</td></tr>
+        <tr><td><b>Skill</b></td><td>把"某种工作流"打包好的<b>能力包</b></td><td>各家平台 / 社区</td><td>App —— 安装就能用</td></tr>
+        <tr><td><b>Agent</b></td><td>能<b>自己规划、调用 Skill/MCP</b> 完成任务的程序</td><td>AI 模型 + 工作台</td><td>员工 —— 会自己用 App 办事</td></tr>
+      </table>
+
+      <p style="color:var(--muted)">👉 <b>记忆口诀</b>：<code>MCP 是插头，Skill 是 App，Agent 是会用 App 的人</code>。</p>
+    </section>
+
+    <section id="sec2">
+      <div class="hero-img reveal">
+        <div class="skeleton"></div>
+        <img loading="lazy" alt="MCP Skill Agent 关系" src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=abstract%20technology%20diagram%2C%20a%20central%20glowing%20AI%20brain%20node%20connected%20with%20glowing%20lines%20to%20smaller%20nodes%20labeled%20as%20skill%20apps%20and%20MCP%20plugin%20connectors%2C%20dark%20space%20background%2C%20neon%20blue%20purple%20and%20cyan%20colors%2C%20network%20topology%2C%20futuristic%20UI%20illustration&image_size=landscape_16_9" onload="this.classList.add('loaded');this.previousElementSibling.remove()" />
+        <span class="caption">祖图：用户 · 模型 · Agent · Skill · 工具</span>
+      </div>
+      <span class="tag">核心模型</span>
+      <h2 class="reveal">一张图看懂：用户 · 模型 · MCP · Skill · Agent</h2>
+      <p class="lead">下面这张图请反复看 3 遍，看到吐为止 —— 它就是你以后解释一切的"祖图"。</p>
+
+      <div class="diagram">
+        <div class="row" style="margin-bottom:18px">
+          <div class="node user">👤 用户<br><small>你(EAP 工程师)</small></div>
+          <div class="arrow">→</div>
+          <div class="node model">🧠 大模型<br><small>DeepSeek / GPT / Claude</small></div>
+        </div>
+        <div class="row" style="margin-bottom:18px">
+          <div class="arrow">↑</div>
+        </div>
+        <div class="row">
+          <div class="node agent">🤖 Agent<br><small>自己规划步骤</small></div>
+          <div class="arrow">→</div>
+          <div class="node skill">🧩 Skill<br><small>封装好的工作流</small></div>
+          <div class="arrow">→</div>
+          <div class="node mcp">🔌 MCP Server<br><small>提供"工具集"</small></div>
+          <div class="arrow">→</div>
+          <div class="node tool">⚙️ 真实工具<br><small>文件 / Git / DB / 浏览器</small></div>
+        </div>
+      </div>
+
+      <h3>它们如何联动？举个 EAP 场景</h3>
+      <pre><code>你：帮我检查机台 SECS-II 日志里最近的 Alarm，把超过 3 次的错误归类
+
+Agent（自动规划）
+  ├─ Step 1 → 调用 Skill: "log-reader"      （读日志的技能）
+  ├─ Step 2 → 调用 MCP:  Read 工具           （Skill 通过 MCP 协议调用文件读取）
+  ├─ Step 3 → 调用 Skill: "alarm-classifier"（分类汇总）
+  └─ Step 4 → 调用 MCP:  Write 工具          （把结果写回 Excel）</code></pre>
+
+      <p><b>关键结论：</b>在现代工作台里，<span class="tag">Agent</span> 是大脑，<span class="tag ok">Skill</span> 是手脚动作模板，<span class="tag warn">MCP</span> 是连接手脚的<b>神经/接口</b>。</p>
+    </section>
+
+    <section id="sec3">
+      <div class="hero-img reveal">
+        <div class="skeleton"></div>
+        <img loading="lazy" alt="三大工具对比" src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=three%20modern%20developer%20tool%20logos%20floating%20in%20a%20clean%20dark%20tech%20workspace%2C%20showing%20DeepSeek%20Harness%20IDE%2C%20OpenAI%20Codex%20terminal%20and%20VS%20Code%20editor%20window%2C%20soft%20neon%20blue%20and%20orange%20and%20green%20glow%2C%20photorealistic%20workspace%20illustration&image_size=landscape_16_9" onload="this.classList.add('loaded');this.previousElementSibling.remove()" />
+        <span class="caption">三件套：DSH / Codex / VS Code</span>
+      </div>
+      <span class="tag">工具地图</span>
+      <h2 class="reveal">三大工具定位：DeepSeek Harness / Codex / VS Code</h2>
+      <p class="lead">这三者<b>不是竞争关系</b>，而是<b>互补</b>。搞清楚谁做什么，决定你什么时候打开哪个。</p>
+
+      <div class="grid grid-3">
+        <div class="card">
+          <h4>🟦 DeepSeek Harness (DSH)</h4>
+          <p>
+            <b>DeepSeek 推出的 AI 工作台 / IDE</b>。<br>
+            定位：国产、对中文友好、支持 MCP/Skill 生态。<br>
+            适合：日常编程、写脚本、读代码、做小工具。<br>
+            <span class="tag ok">国产</span><span class="tag">中文友好</span>
+          </p>
+        </div>
+        <div class="card">
+          <h4>🟧 Codex (OpenAI)</h4>
+          <p>
+            <b>OpenAI 的代码 Agent</b>，有网页 / 桌面 / CLI 多种形态。<br>
+            定位：远程云端执行、可读你整个仓库、自动开 PR。<br>
+            适合：跨项目重构、大仓库改 bug、写完整功能。<br>
+            <span class="tag warn">需翻墙/账号</span><span class="tag">云端最强</span>
+          </p>
+        </div>
+        <div class="card">
+          <h4>🟩 VS Code + GitHub Copilot</h4>
+          <p>
+            <b>你的主力编辑器 + Copilot 企业版</b>。<br>
+            定位：在写代码的当下补全、解释、重构、Agent 模式自动干活。<br>
+            适合：现场编码、调试、写注释、单元测试、批量改。<br>
+            <span class="tag pink">最常用</span><span class="tag">已采购</span>
+          </p>
+        </div>
+      </div>
+
+      <h3>什么时候打开哪个？(决策表)</h3>
+      <table>
+        <tr><th>你的场景</th><th>推荐工具</th><th>原因</th></tr>
+        <tr><td>想 30 秒内读懂一段陌生代码</td><td>VS Code + Copilot Chat</td><td>选中代码直接问，最快</td></tr>
+        <tr><td>想批量改 50 个机台脚本</td><td>Codex / Codex CLI</td><td>云端能扫整个仓库，自动 PR</td></tr>
+        <tr><td>中文需求、写 EAP 内部小工具</td><td>DeepSeek Harness</td><td>中文强、本地优先</td></tr>
+        <tr><td>写自动化 UI / RCMS 接口</td><td>VS Code + Copilot Agent</td><td>你们已采购 Copilot,直接用最强模式</td></tr>
+        <tr><td>想"一句话让 AI 自己干一连串事"</td><td>Trae / Harness 的 Agent 模式</td><td>智能体自动规划</td></tr>
+      </table>
+    </section>
+
+    <section id="sec4">
+      <div class="hero-img reveal">
+        <div class="skeleton"></div>
+        <img loading="lazy" alt="DeepSeek Harness" src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=modern%20dark%20IDE%20interface%20floating%20on%20a%20desk%2C%20code%20editor%20with%20Chinese%20text%20on%20screen%2C%20glowing%20AI%20chat%20sidebar%2C%20plugin%20icons%20on%20left%20rail%2C%20soft%20blue%20and%20purple%20neon%20lights%2C%20clean%20minimal%20desk%20scene%2C%20photorealistic%20illustration&image_size=landscape_16_9" onload="this.classList.add('loaded');this.previousElementSibling.remove()" />
+        <span class="caption">DeepSeek Harness IDE 主界面</span>
+      </div>
+      <span class="tag">DSH</span>
+      <h2 class="reveal">DeepSeek Harness 入门 · 安装 / 插件 / 自造插件 / 工作台</h2>
+      <p class="lead">DeepSeek Harness(简称 DSH)是 DeepSeek 推出的 IDE 形态 AI 工具。下面我们一步步把"插件"和"工作台"讲明白。</p>
+
+      <h3>4.1 安装 DeepSeek Harness</h3>
+      <ol class="steps">
+        <li>访问 <a href="https://www.deepseek.com" target="_blank">deepseek.com</a> 或官方 IDE 下载页，下载对应系统版本(Windows/macOS/Linux)。</li>
+        <li>安装过程和 VS Code 类似：下一步 → 勾选"添加到 PATH" → 完成。</li>
+        <li>首次打开使用 DeepSeek 账号登录；若无账号，手机号注册即可。</li>
+        <li>在 <code>设置 → 模型</code> 里挑 DeepSeek-V3 / R1，按需切换"快"(V3)与"深"(R1)。</li>
+      </ol>
+
+      <h3>4.2 安装插件(3 个必装)</h3>
+      <div class="grid grid-3">
+        <div class="card"><h4>① Chinese Lint</h4><p>中文提交信息、注释规范。半导体项目多人合作用得上。</p></div>
+        <div class="card"><h4>② SECS/HSMS Snippets</h4><p>(社区版) 机台通信常用代码片段。装后输入 <code>secs</code> 自动补全。</p></div>
+        <div class="card"><h4>③ MCP Bridge</h4><p>DSH 原生支持 MCP，这里是"可视化配置 MCP" 的桥接插件。</p></div>
+      </div>
+
+      <p><b>操作路径：</b><code>左侧插件图标 → 搜索 → Install → Reload</code>，和 VS Code 几乎一样。</p>
+
+      <h3>4.3 如何"创造"自己的插件(Workbench Skill)</h3>
+      <p>DSH 的"插件"分两种含义，请区分：</p>
+      <table>
+        <tr><th>类型</th><th>本质</th><th>难度</th><th>适合谁</th></tr>
+        <tr><td>UI 扩展插件</td><td>改界面/快捷键/侧边栏</td><td>⭐⭐</td><td>前端开发者</td></tr>
+        <tr><td><b>Skill(技能包)</b></td><td>一段提示词 + 工具调用流程</td><td>⭐</td><td><b>所有 EAP 工程师</b></td></tr>
+      </table>
+
+      <p><b>推荐做法：先学 Skill，不要碰 UI 插件。</b>Skill 本质是一个 <code>SKILL.md</code> + 几个配置文件。</p>
+
+      <h4>Step 1：建一个 Skill 目录</h4>
+      <pre><code>my-eap-skills/
+└── secs-log-analyzer/
+    ├── SKILL.md        # 告诉 AI"你是谁、能干什么"
+    ├── tools.json      # 列出本 Skill 能用的工具(MCP)
+    └── examples/
+        └── sample.log  # 示例文件</code></pre>
+
+      <h4>Step 2：写 SKILL.md(给 AI 看的"说明书")</h4>
+      <pre><code>---
+name: secs-log-analyzer
+description: 解析 SECS-II / HSMS 日志，统计 Alarm 频次并分类
+trigger: 当用户说"分析机台日志"、"alarm 归类"时触发
+---
+
+# 你的角色
+你是一名 EAP 工程师助手，专门分析 SECS-II 日志。
+
+# 工作流程
+1. 用 `read_file` 读取用户给定的日志路径
+2. 解析每一行，提取 Event / SxFy / AlarmID
+3. 按 AlarmID 出现频次倒序，输出表格
+4. 若频次 ≥ 3，标注为"高频"并给出建议
+
+# 输出格式
+Markdown 表格 + 一句话结论。</code></pre>
+
+      <h4>Step 3：在 DSH 中加载</h4>
+      <pre><code>DSH → 设置 → Skills → 添加本地路径 → 选择 my-eap-skills/ → 完成</code></pre>
+
+      <p>之后只要在 DSH 对话框里说"分析机台日志"，AI 就会<b>自动按你的 Skill 流程</b>干活。</p>
+
+      <h3>4.4 打造你的个人工作台</h3>
+      <ul class="checklist">
+        <li>把常用 Skill 集中放到一个目录，例如 <code>D:/eap-skills/</code></li>
+        <li>为不同项目建不同 <b>Workspace</b>(机台 / RCMS / AutomationUI 各一个)</li>
+        <li>每个 Workspace 挂载相关 Skill，避免混乱</li>
+        <li>模型策略：日常用 V3(快)、排查难题切 R1(深)、写代码可接 Copilot</li>
+        <li>用 <code>.dshignore</code> 排除厂内机密文件，防止误上传</li>
+      </ul>
+    </section>
+
+    <section id="sec5">
+      <div class="hero-img reveal">
+        <div class="skeleton"></div>
+        <img loading="lazy" alt="Codex CLI" src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=cinematic%20dark%20terminal%20window%20floating%20in%20space%2C%20command%20line%20interface%20with%20colored%20text%2C%20AI%20chat%20bubbles%20on%20right%20side%2C%20matrix%20style%20code%20rain%20subtle%20background%2C%20neon%20blue%20and%20orange%20glow%2C%20futuristic%20CLI%20illustration&image_size=landscape_16_9" onload="this.classList.add('loaded');this.previousElementSibling.remove()" />
+        <span class="caption">Codex CLI：终端里的 AI 编程搭档</span>
+      </div>
+      <span class="tag">Codex</span>
+      <h2 class="reveal">Codex 入门 · 网页 / 桌面 / CLI 三形态</h2>
+      <p class="lead">OpenAI 的 Codex 现在不只是一个聊天框，而是一个<b>真正能干活的代码 Agent</b>。</p>
+
+      <h3>5.1 三种使用形态</h3>
+      <div class="grid grid-3">
+        <div class="card"><h4>① ChatGPT 网页里的 Codex</h4><p>挂在 ChatGPT 左侧，可读你 GitHub 仓库。开 PR、改 bug、跑测试。</p></div>
+        <div class="card"><h4>② Codex Desktop</h4><p>独立桌面应用，类似 Cursor。能接管你整个本地工程。</p></div>
+        <div class="card"><h4>③ Codex CLI</h4><p>命令行工具，<code>npm i -g @openai/codex</code>，终端里直接对话。<b>最强大、最受开发者喜欢</b>。</p></div>
+      </div>
+
+      <h3>5.2 Codex CLI 安装(推荐你装)</h3>
+      <ol class="steps">
+        <li>需要 Node.js 18+(<code>node -v</code> 验证)。</li>
+        <li>执行 <code>npm install -g @openai/codex</code></li>
+        <li>运行 <code>codex</code>，用 ChatGPT 账号完成登录(OAuth 弹窗)。</li>
+        <li>在项目根目录运行 <code>codex</code> 进入 REPL，直接用自然语言下指令。</li>
+      </ol>
+
+      <h3>5.3 Codex 的"超能力"：Skills &amp; MCP</h3>
+      <pre><code>// ~/.codex/config.toml
+[mcp_servers.filesystem]
+command = "npx"
+args = ["-y", "@modelcontextprotocol/server-filesystem", "D:/eap-projects"]
+
+[mcp_servers.github]
+url = "https://api.github.com/mcp/"
+headers = { Authorization = "Bearer xxx" }</code></pre>
+
+      <p>上面这段配置说明：<br>
+        • Codex 通过 <b>MCP</b> 加载了两个外部工具：本地文件 & GitHub。<br>
+        • 装好后，Codex 的 Agent 就能"读你的 D 盘项目" + "操作 GitHub"。<br>
+      </p>
+
+      <h3>5.4 第一次实战(10 分钟跑通)</h3>
+      <pre><code>$ cd D:/eap-projects/rcms
+$ codex
+> 帮我看一下 src/main/java/ 下的 RCMSController.java，
+  解释 doStartLot() 这个方法的执行流程，并指出潜在的空指针风险。
+
+(Codex 自动读文件 → 调 LLM → 输出 Markdown 报告)</code></pre>
+    </section>
+
+    <section id="sec6">
+      <div class="hero-img reveal">
+        <div class="skeleton"></div>
+        <img loading="lazy" alt="GitHub Copilot" src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=VS%20Code%20editor%20with%20GitHub%20Copilot%20Chat%20sidebar%20open%2C%20dark%20theme%2C%20code%20suggestions%20appearing%20inline%2C%20enterprise%20license%20badge%20on%20top%20right%2C%20modern%20workspace%20with%20coffee%20cup%2C%20clean%20minimal%20photorealistic%20illustration&image_size=landscape_16_9" onload="this.classList.add('loaded');this.previousElementSibling.remove()" />
+        <span class="caption">VS Code + GitHub Copilot（你们已采购）</span>
+      </div>
+      <span class="tag">VS Code</span>
+      <h2 class="reveal">VS Code + GitHub Copilot：你们厂的工作台主力</h2>
+      <p class="lead">你们已购买 <b>GitHub Copilot 企业版</b>，这就是日常主力。本节讲清 Copilot 的<b>全部能力</b>、<b>合规用法</b>，以及如何给它"接上 MCP"扩展工具调用。</p>
+
+      <div class="card" style="border-color:rgba(61,220,151,.4);background:rgba(61,220,151,.06)">
+        <h4>✅ 你们已经在使用 Copilot 的优势</h4>
+        <p>• 企业版默认<b>不上传代码片段训练</b>(数据保护承诺)<br>
+        • 管理员可以统一管控可见模型、审计日志<br>
+        • 走公司账号 SSO，账号安全有保障<br>
+        • Copilot 已原生支持 <b>Agent 模式 + MCP</b>，能力不输 Cursor</p>
+      </div>
+
+      <h3>6.1 Copilot 全家桶（你可能不知道的 6 个能力）</h3>
+      <div class="grid grid-2">
+        <div class="card">
+          <h4>① 内联补全 <code style="color:var(--acc)">Tab</code></h4>
+          <p>打码时自动灰色提示，按 <span class="kbd">Tab</span> 接收。最常用、最快。</p>
+        </div>
+        <div class="card">
+          <h4>② Copilot Chat <code>Ctrl+I</code></h4>
+          <p>侧边栏对话。选中代码 → 问"这做了什么 / 怎么改 / 写测试"。</p>
+        </div>
+        <div class="card">
+          <h4>③ Copilot Edit <code>Ctrl+Shift+I</code></h4>
+          <p>多文件批量编辑模式。说"把所有机台脚本的命名规范改了"，它会**给出 diff 让你确认**。</p>
+        </div>
+        <div class="card">
+          <h4>④ Copilot Agent 模式（新）</h4>
+          <p>AI 自动规划步骤：读文件→改文件→跑测试→循环迭代。<b>你们的 EAP 任务用它最强</b>。</p>
+        </div>
+        <div class="card">
+          <h4>⑤ Copilot Workspace</h4>
+          <p>把整个 GitHub Issue 当成任务，AI 自动开 PR。<b>跨模块重构、bug 修复</b> 用这个。</p>
+        </div>
+        <div class="card">
+          <h4>⑥ Copilot for CLI / PR / Docs</h4>
+          <p>终端对话、自动写 PR 描述、从代码生成 Wiki。装对应插件即可。</p>
+        </div>
+      </div>
+
+      <h3>6.2 Agent 模式：Copilot 最强的功能（重点）</h3>
+      <p>Agent 模式 = Copilot 不仅答问题，还能<b>自己执行</b>。操作路径：</p>
+      <pre><code>VS Code 右侧 Copilot 图标 → 下拉选 "Agent" → 输入任务
+示例输入:
+  "帮我扫描 src/ 下所有 .java 文件，把 log.error 改成 slf4j 的标准格式，
+   并自动跑 mvn test 看是否通过。"</code></pre>
+
+      <p>Agent 会自动：</p>
+      <ol class="steps">
+        <li>列出所有目标文件</li>
+        <li>逐个读懂上下文</li>
+        <li>给出修改 diff，<b>等你点击 Apply</b></li>
+        <li>执行命令（编译、测试、git commit）</li>
+        <li>出错时自动调整重试</li>
+      </ol>
+
+      <div class="card" style="border-color:rgba(122,162,255,.3)">
+        <h4>💡 EAP 工程师的 Agent 模式典型任务</h4>
+        <p>
+          • "把这个 Java 接口的所有参数校验补全"<br>
+          • "给这个 RCMS 模块加 JaCoCo 单元测试覆盖率"<br>
+          • "把 SECS-II 消息常量从硬编码提取到配置文件"<br>
+          • "给 AutomationUI 的 Vue 组件写 props 类型定义"
+        </p>
+      </div>
+
+      <h3>6.3 Copilot + MCP：让它能"动手干活"</h3>
+      <p>默认 Copilot 只能读 VS Code 里打开的文件。装了 MCP Server，它就能调用外部工具。配置方法：</p>
+      <pre><code>// VS Code → 设置 → "MCP" → 添加 MCP Server
+// 或者在项目根目录的 .vscode/mcp.json 中：
+{
+  "servers": {
+    "filesystem": {
+      "command": "npx",
+      "args": ["-y","@modelcontextprotocol/server-filesystem","D:/eap-projects"]
+    },
+    "github": {
+      "command": "npx",
+      "args": ["-y","@modelcontextprotocol/server-github"],
+      "env": { "GITHUB_TOKEN": "你的企业 PAT" }
+    }
+  }
+}</code></pre>
+
+      <p>配好后 Copilot 多了"工具栏"：能直接读 D 盘全项目、能直接开 GitHub PR。</p>
+
+      <h3>6.4 合规使用 Copilot 的 5 条军规（厂内必读）</h3>
+      <ul class="checklist">
+        <li><b>❌ 不要</b>把含<b>客户代码 / 工艺参数 / 账号密码 / .env</b> 的整段贴进 Chat</li>
+        <li><b>✅ 选中代码块</b>再问 AI（Copilot 默认只传你选中的部分）</li>
+        <li>敏感模块先用 <code>gitignore</code> 或 Copilot 的 <b>"Exclude files"</b> 设置排除</li>
+        <li>AI 给出的代码必须<b>人工 Review</b>再提交，特别是 SECS 通信、状态机部分</li>
+        <li>开启<b>管理员审计日志</b>（IT 已默认开启），不要试图绕过</li>
+      </ul>
+
+      <div class="card" style="border-color:rgba(255,184,107,.4);background:rgba(255,184,107,.06)">
+        <h4>⚠️ Copilot 与 Copilot 企业版的区别</h4>
+        <p>你们买的<b>企业版（Enterprise）</b>承诺：<br>
+        • 提示词与代码补全<b>不会用于训练</b>任何模型<br>
+        • 数据隔离在企业租户<br>
+        • 管理员可一键关停 / 删除历史<br>
+        <b>如果是个人版（Pro），请尽快升级到 Enterprise，否则合规有风险。</b></p>
+      </div>
+
+      <h3>6.5 推荐配套工具（与 Copilot 互补）</h3>
+      <table>
+        <tr><th>工具</th><th>用途</th><th>是否必装</th></tr>
+        <tr><td><b>Copilot Chat</b></td><td>对话、补全、Agent</td><td>✅ 已自带</td></tr>
+        <tr><td><b>Cline</b> 插件</td><td>在 Copilot 之外，多 Agent 备选</td><td>⭐ 推荐</td></tr>
+        <tr><td><b>GitLens</b></td><td>看 git 历史 blame，AI 解释 commit</td><td>✅ 强烈推荐</td></tr>
+        <tr><td><b>Error Lens</b></td><td>把编译错误直接显示在行末</td><td>✅ 推荐</td></tr>
+        <tr><td>Continue（本地模型）</td><td>敏感模块用<b>本地 DeepSeek</b>，避免外传</td><td>⭐ 选装（高敏感）</td></tr>
+      </table>
+    </section>
+
+    <section id="sec7">
+      <div class="hero-img reveal">
+        <div class="skeleton"></div>
+        <img loading="lazy" alt="EAP 半导体实战" src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=semiconductor%20fab%20automation%20control%20room%2C%20glowing%20HMI%20interface%20with%20multiple%20monitors%20showing%20SECS%20protocol%20logs%20and%20alarm%20dashboards%2C%20cleanroom%20worker%20silhouette%20in%20foreground%2C%20orange%20and%20blue%20neon%20industrial%20lighting%2C%20futuristic%20factory%20photorealistic%20illustration&image_size=landscape_16_9" onload="this.classList.add('loaded');this.previousElementSibling.remove()" />
+        <span class="caption">半导体 FAB 自动化控制室</span>
+      </div>
+      <span class="tag">EAP 实战</span>
+      <h2 class="reveal">EAP 场景实战剧本：把工具落到你日常</h2>
+      <p class="lead">下面 6 个剧本，每个 1 周可练熟。建议按顺序练。</p>
+
+      <div class="grid grid-2">
+        <div class="card">
+          <h4>剧本 1：读陌生代码 🚀</h4>
+          <p>拿到一个老 SECS 通信模块，5 分钟内让 AI 给你讲清楚状态机。</p>
+          <p><code>VS Code + Copilot Agent / DSH 对话模式</code></p>
+        </div>
+        <div class="card">
+          <h4>剧本 2：写单元测试 🧪</h4>
+          <p>选一个方法，让它自动生成 JUnit 用例 + 覆盖率报告。</p>
+          <p><code>DSH / Codex CLI</code></p>
+        </div>
+        <div class="card">
+          <h4>剧本 3：批量重命名 & 加注释 ✍️</h4>
+          <p>50 个机台脚本，统一加中文注释、统一变量命名规范。</p>
+          <p><code>Codex CLI + MCP filesystem</code></p>
+        </div>
+        <div class="card">
+          <h4>剧本 4：日志告警分析 📊</h4>
+          <p>把一周的 Alarm log 给 AI，让它分类、出 Excel。</p>
+          <p><code>DSH 自定义 Skill + MCP Read/Write</code></p>
+        </div>
+        <div class="card">
+          <h4>剧本 5：写 RCMS 接口 📡</h4>
+          <p>告诉 AI 接口表结构，让它生成 Controller + Service + DAO 全套。</p>
+          <p><code>Codex / DSH/Claude</code></p>
+        </div>
+        <div class="card">
+          <h4>剧本 6：AutomationUI 表单 🖥️</h4>
+          <p>描述页面需求，AI 生成 Vue/React 表单 + 校验逻辑。</p>
+          <p><code>DSH Agent 模式</code></p>
+        </div>
+      </div>
+    </section>
+
+    <section id="sec8">
+      <div class="hero-img reveal">
+        <div class="skeleton"></div>
+        <img loading="lazy" alt="AI 自动化进化" src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=abstract%20evolution%20staircase%20illustration%2C%20four%20glowing%20steps%20rising%20from%20left%20to%20right%2C%20first%20step%20a%20chat%20bubble%2C%20second%20a%20file%20read%20icon%2C%20third%20a%20gears%20icon%2C%20fourth%20a%20clock%20timer%20icon%2C%20dark%20background%2C%20gradient%20blue%20purple%20green%20orange%2C%20futuristic%20flat%20illustration&image_size=landscape_16_9" onload="this.classList.add('loaded');this.previousElementSibling.remove()" />
+        <span class="caption">AI 自动化四阶段：问答 → 读写 → 多步 → 定时</span>
+      </div>
+      <span class="tag">进阶</span>
+      <h2 class="reveal">从"问答阶段" → "自动化工作流"</h2>
+      <p class="lead">这是最值钱的能力 —— 让 AI 替你"上班"。</p>
+
+      <h3>阶段 1：你问 AI 答（你现在在这里）</h3>
+      <pre><code>你: 这段代码干嘛的？
+AI: 它做了 XXX ...</code></pre>
+
+      <h3>阶段 2：AI 能读写（MCP 加进来后）</h3>
+      <pre><code>你: 帮我把 logs/ 目录昨天的 alarm 统计成表
+AI: (自动读文件 → 分析 → 写 Excel)</code></pre>
+
+      <h3>阶段 3：AI 能多步规划（Skill + Agent）</h3>
+      <pre><code>你: 上线前帮我做一次 RCMS 全量自检
+AI: (自动跑测试 + 检依赖 + 看日志 + 生成报告)</code></pre>
+
+      <h3>阶段 4：AI 定时自动干（自动化/Scheduled）</h3>
+      <p>把"每天早上 8 点生成前 24h alarm 报告"做成一条自动化任务。AI 自己跑，到点出结果。</p>
+
+      <p><b>提升路径总结：</b><span class="tag">问答</span> → <span class="tag ok">读写</span> → <span class="tag pink">多步</span> → <span class="tag warn">定时</span></p>
+    </section>
+
+    <section id="sec9">
+      <div class="hero-img reveal">
+        <div class="skeleton"></div>
+        <img loading="lazy" alt="视频学习资源" src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=open%20book%20with%20glowing%20pages%20and%20a%20play%20button%20icon%2C%20laptop%20and%20notebook%20on%20a%20desk%2C%20multiple%20video%20play%20thumbnails%20floating%20above%2C%20dark%20cozy%20study%20atmosphere%2C%20blue%20and%20orange%20warm%20neon%20light%2C%20modern%20flat%20illustration&image_size=landscape_16_9" onload="this.classList.add('loaded');this.previousElementSibling.remove()" />
+        <span class="caption">精选视频与文档：B站 + 官方文档</span>
+      </div>
+      <span class="tag">资源</span>
+      <h2 class="reveal">推荐视频 & 文档清单</h2>
+      <p class="lead">这些是我精挑过的，<b>不要囤，按顺序刷</b>。</p>
+
+      <h3>🎬 中文视频(B站优先)</h3>
+      <div class="video-card">
+        <span class="badge">B站</span>
+        <div>
+          <h5>《2025 最全 MCP 协议教程》—— 喂进大厂 / 程序员鱼皮</h5>
+          <div class="meta">约 1 小时 · 入门首选 · 含实战写 MCP Server</div>
+          <p>把 MCP 是什么、为什么火、自己怎么写一个讲得很清楚。</p>
+        </div>
+      </div>
+      <div class="video-card">
+        <span class="badge">B站</span>
+        <div>
+          <h5>《DeepSeek Harness 实战：从入门到插件开发》</h5>
+          <div class="meta">约 45 分钟 · 官方/社区版均有</div>
+          <p>演示如何安装、装插件、自定义 Skill。</p>
+        </div>
+      </div>
+      <div class="video-card">
+        <span class="badge">B站</span>
+        <div>
+          <h5>《Codex CLI 实战》—— 各类 UP 主</h5>
+          <div class="meta">搜索关键词 "Codex CLI 教程"</div>
+          <p>主要看"装 + 第一次跑通"的实战片段。</p>
+        </div>
+      </div>
+      <div class="video-card">
+        <span class="badge">B站</span>
+        <div>
+          <h5>《GitHub Copilot 全套教程》—— B站搜 "Copilot 教程 2025"</h5>
+          <div class="meta">多个 UP 主 · 1 ~ 2 小时</div>
+          <p>重点看 <b>Agent 模式 + MCP 配置</b> 的演示章节。</p>
+        </div>
+      </div>
+
+      <h3>📚 必读文档</h3>
+      <ul class="checklist">
+        <li><b>MCP 官方文档</b>：<a href="https://modelcontextprotocol.io" target="_blank">modelcontextprotocol.io</a> —— 协议定义、规范、SDK 都在这里。</li>
+        <li><b>DeepSeek Harness 文档</b>：DSH 内 <code>帮助 → 文档</code>，或 deepseek.com 开发者中心。</li>
+        <li><b>Codex CLI 文档</b>：<a href="https://github.com/openai/codex" target="_blank">github.com/openai/codex</a> —— README 是最好的入门。</li>
+        <li><b>GitHub Copilot 官方文档</b>：<a href="https://docs.github.com/copilot" target="_blank">docs.github.com/copilot</a> —— Agent、Edit、Workspace 全在这。</li>
+        <li><b>Continue 文档</b>：<a href="https://docs.continue.dev" target="_blank">docs.continue.dev</a> —— 仅当高敏感模块需要本地模型时再翻。</li>
+        <li><b>Anthropic MCP Servers 仓库</b>：<a href="https://github.com/modelcontextprotocol/servers" target="_blank">官方 MCP Server 列表</a>，直接抄作业。</li>
+      </ul>
+
+      <h3>🌐 海外英文(进阶用)</h3>
+      <div class="video-card">
+        <span class="badge">YouTube</span>
+        <div>
+          <h5>《MCP Explained in 100 Seconds》— Fireship</h5>
+          <div class="meta">100 秒 · 极简科普</div>
+          <p>给团队讲时引用，最易懂。</p>
+        </div>
+      </div>
+      <div class="video-card">
+        <span class="badge">YouTube</span>
+        <div>
+          <h5>《Building Agents with the OpenAI Agents SDK》— OpenAI 官方</h5>
+          <div class="meta">约 40 分钟 · 体系化</div>
+          <p>想真正搞懂 Agent 怎么搭，看这个。</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="sec10">
+      <div class="hero-img reveal">
+        <div class="skeleton"></div>
+        <img loading="lazy" alt="30 天落地计划" src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=modern%20calendar%20with%20glowing%20checkmarks%20and%20milestones%2C%2030%20day%20learning%20journey%20visualized%2C%20rocket%20launching%20from%20the%20last%20day%2C%20dark%20background%20with%20blue%20purple%20orange%20neon%20glow%2C%20flat%20modern%20illustration%2C%20inspiring%20growth%20visual&image_size=landscape_16_9" onload="this.classList.add('loaded');this.previousElementSibling.remove()" />
+        <span class="caption">30 天落地 · 30 天从学到能讲</span>
+      </div>
+      <span class="tag">行动</span>
+      <h2 class="reveal">30 天落地计划：从今天到能给同事讲解</h2>
+      <p class="lead">按这个表打勾，30 天后你不仅会用，还能<b>把同事讲明白</b>。</p>
+
+      <h3>第 1 周：概念 + 装环境</h3>
+      <ul class="checklist">
+        <li>看完本文第 1、2 节，把"祖图"画一遍手绘</li>
+        <li>装好 VS Code + Copilot Agent + DSH + Codex CLI 三个工具</li>
+        <li>把现有 EAP 项目在三个工具里各跑一次 "explain this code"</li>
+      </ul>
+
+      <h3>第 2 周：Skill + MCP 起步</h3>
+      <ul class="checklist">
+        <li>写第一个 Skill：<code>secs-log-analyzer</code>(复制第 4.3 模板)</li>
+        <li>配置第一个 MCP Server：filesystem(指向你的项目目录)</li>
+        <li>用这个 Skill 整理一次真实的 alarm 日志</li>
+      </ul>
+
+      <h3>第 3 周：自动化工作流</h3>
+      <ul class="checklist">
+        <li>完成剧本 1、2、3 各一次</li>
+        <li>尝试用 Codex CLI 完成一次跨模块重构</li>
+        <li>把"日报"用 DSH Skill 半自动化</li>
+      </ul>
+
+      <h3>第 4 周：讲解准备</h3>
+      <ul class="checklist">
+        <li>把这套 HTML 课件投影给团队，照着讲一遍</li>
+        <li>收集同事问题，迭代你那份 Skill</li>
+        <li>把"机台告警诊断"做成一条自动化(每天 8 点)</li>
+      </ul>
+
+      <div class="hero" style="margin-top:30px">
+        <h1 style="font-size:28px">🎓 学完你会变成什么样？</h1>
+        <p class="lead">
+          • 你不再是"问 AI 一句话"的人，而是<b>给团队搭工作台的人</b><br>
+          • 你能用 AI 自动写 RCMS 接口、自动审 AutomationUI 页面<br>
+          • 你能给同事讲清楚 MCP / Skill / Agent 是什么<br>
+          • 你会在机台告警发生时，<b>一句话让 AI 出报告</b>，而不是熬夜人肉翻日志
+        </p>
+      </div>
+    </section>
+
+    <footer>
+      课件版本 v1.0 · 适配 EAP / RCMS / AutomationUI 场景 · 自学+讲解两用
+    </footer>
+  </main>
+</div>
+
+<div class="ppt-nav" id="pptNav" style="display:none">
+  <button id="prevBtn" title="上一页">‹</button>
+  <button id="nextBtn" title="下一页">›</button>
+</div>
+<div class="ppt-tip" id="pptTip" style="display:none">
+  按 <span class="kbd">←</span> / <span class="kbd">→</span> 翻页 · <span class="kbd">Esc</span> 退出演讲
+</div>
+
+<script>
+(function(){
+  const $ = (s,r=document)=>r.querySelector(s);
+  const $$ = (s,r=document)=>[...r.querySelectorAll(s)];
+
+  const sections = $$('main section');
+  const tocLinks = $$('nav.toc a');
+  const modeBtns = $$('.mode-switch button');
+  const progressEl = $('#progress');
+  const topbar = $('.topbar');
+  const layout = $('.layout');
+
+  // 让所有 section 内的子元素(标题/段落/卡片/表格等)默认隐藏,等待滚动触发
+  function markRevealChildren(){
+    sections.forEach(sec=>{
+      sec.querySelectorAll('h1,h2,h3,p,table,pre,.card,.diagram,.steps,.checklist,.video-card,.node,.row,.arrow,.hero,.lead,.grid,.tag').forEach((el,i)=>{
+        if(el.classList.contains('reveal')||el.classList.contains('hero-img')) return;
+        if(el.closest('.hero-img')) return;
+        el.classList.add('reveal');
+        el.classList.add('delay-'+Math.min(i%4,4));
+      });
+    });
+  }
+  markRevealChildren();
+
+  // 滚动监听:进入视口时添加 .in
+  const revealIO = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{
+      if(e.isIntersecting){
+        e.target.classList.add('in');
+        revealIO.unobserve(e.target);
+      }
+    });
+  }, { threshold:.12, rootMargin:'0px 0px -60px 0px' });
+  $$('.reveal').forEach(el=>revealIO.observe(el));
+
+  function setMode(mode){
+    document.body.classList.toggle('ppt-mode', mode==='ppt');
+    document.body.classList.toggle('doc-mode', mode!=='ppt');
+    $('#pptNav').style.display = mode==='ppt' ? 'flex' : 'none';
+    $('#pptTip').style.display = mode==='ppt' ? 'block' : 'none';
+    modeBtns.forEach(b=>b.classList.toggle('active', b.dataset.mode===mode));
+    if(mode==='ppt'){
+      sections.forEach(s=>{s.classList.remove('active');s.classList.remove('leaving')});
+      sections[0].classList.add('active');
+      pptIndex = 0;
+      updateProgress();
+      window.scrollTo(0,0);
+    } else {
+      // 退回到文档模式时,所有 section 立刻可见
+      sections.forEach(s=>s.classList.remove('active'));
+    }
+  }
+  modeBtns.forEach(b=>b.addEventListener('click', ()=>setMode(b.dataset.mode)));
+
+  // TOC active sync + 顶栏进度条
+  const io = new IntersectionObserver(entries=>{
+    entries.forEach(e=>{
+      if(e.isIntersecting && !document.body.classList.contains('ppt-mode')){
+        const id = e.target.id;
+        tocLinks.forEach(a=>a.classList.toggle('active', a.getAttribute('href')==='#'+id));
+        const i = sections.indexOf(e.target);
+        if(i>0){
+          progressEl.textContent = `目录 ${i+1} / ${sections.length}`;
+          const pct = ((i+1)/sections.length)*100;
+          topbar.style.setProperty('--w', pct+'%');
+        }
+      }
+    });
+  }, { rootMargin: '-30% 0px -60% 0px', threshold: 0 });
+  sections.forEach(s=>io.observe(s));
+
+  function updateProgress(){
+    progressEl.textContent = `目录 ${pptIndex+1} / ${sections.length}`;
+    const pct = ((pptIndex+1)/sections.length)*100;
+    topbar.style.setProperty('--w', pct+'%');
+  }
+
+  // PPT 翻页动画(带方向感)
+  let pptIndex = 0;
+  let prevPptIndex = 0;
+  function showSlide(i){
+    const next = Math.max(0, Math.min(sections.length-1, i));
+    if(next===pptIndex) return;
+    prevPptIndex = pptIndex;
+    const goingRight = next>pptIndex;
+    // 旧页朝反方向退场
+    sections[pptIndex].classList.add('leaving');
+    sections[pptIndex].classList.remove('active');
+    pptIndex = next;
+    // 新页从对应方向入场
+    sections[next].classList.add('active');
+    sections[next].style.transform = goingRight ? 'translateX(60px) scale(.97)' : 'translateX(-60px) scale(.97)';
+    requestAnimationFrame(()=>{
+      requestAnimationFrame(()=>{
+        sections[next].style.transform = '';
+      });
+    });
+    setTimeout(()=>sections[prevPptIndex].classList.remove('leaving'), 700);
+    updateProgress();
+  }
+  $('#nextBtn').addEventListener('click', ()=>showSlide(pptIndex+1));
+  $('#prevBtn').addEventListener('click', ()=>showSlide(pptIndex-1));
+  document.addEventListener('keydown', e=>{
+    if(!document.body.classList.contains('ppt-mode')) return;
+    if(e.key==='ArrowRight' || e.key==='PageDown' || e.key===' ') { e.preventDefault(); showSlide(pptIndex+1); }
+    else if(e.key==='ArrowLeft' || e.key==='PageUp') { e.preventDefault(); showSlide(pptIndex-1); }
+    else if(e.key==='Escape') setMode('doc');
+    else if(e.key==='Home') showSlide(0);
+    else if(e.key==='End') showSlide(sections.length-1);
+    else if(/^[0-9]$/.test(e.key)) showSlide(parseInt(e.key,10)-1);
+  });
+
+  // 鼠标滚轮翻页(PPT 模式)
+  let wheelLock = false;
+  document.addEventListener('wheel', e=>{
+    if(!document.body.classList.contains('ppt-mode')) return;
+    if(wheelLock) return;
+    if(Math.abs(e.deltaY)<10) return;
+    wheelLock = true;
+    showSlide(pptIndex + (e.deltaY>0?1:-1));
+    setTimeout(()=>{wheelLock=false}, 700);
+  }, { passive:true });
+
+  // 点击 TOC 跳转(平滑滚动)
+  tocLinks.forEach(a=>{
+    a.addEventListener('click', e=>{
+      if(document.body.classList.contains('ppt-mode')){
+        e.preventDefault();
+        const target = a.getAttribute('href').slice(1);
+        const idx = sections.findIndex(s=>s.id===target);
+        if(idx>=0) showSlide(idx);
+      } else {
+        e.preventDefault();
+        const target = document.getElementById(a.getAttribute('href').slice(1));
+        if(target) target.scrollIntoView({behavior:'smooth', block:'start'});
+      }
+    });
+  });
+
+  // 页面进入时先标记第一屏为可见
+  setTimeout(()=>{
+    sections[0].classList.add('in');
+    const pct = (1/sections.length)*100;
+    topbar.style.setProperty('--w', pct+'%');
+  }, 100);
+
+  // ============ 主题切换 ============
+  const themeBtn = $('#themeBtn');
+  function applyTheme(theme){
+    const isLight = theme==='light';
+    document.body.classList.toggle('light', isLight);
+    themeBtn.textContent = isLight ? '☀️ 亮' : '🌙 暗';
+    themeBtn.classList.toggle('active', isLight);
+    try{localStorage.setItem('theme', theme);}catch(e){}
+  }
+  // 恢复主题
+  try{
+    const saved = localStorage.getItem('theme');
+    if(saved) applyTheme(saved);
+  }catch(e){}
+  themeBtn.addEventListener('click', ()=>{
+    applyTheme(document.body.classList.contains('light') ? 'dark' : 'light');
+  });
+
+  // ============ 翻页音(Web Audio 合成) ============
+  const soundBtn = $('#soundBtn');
+  let soundOn = false;
+  let audioCtx = null;
+  function ensureAudio(){
+    if(!audioCtx) audioCtx = new (window.AudioContext||window.webkitAudioContext)();
+    return audioCtx;
+  }
+  function beep(freq=520, dur=0.08, type='sine', vol=0.04){
+    if(!soundOn) return;
+    try{
+      const ctx = ensureAudio();
+      const o = ctx.createOscillator();
+      const g = ctx.createGain();
+      o.type = type;o.frequency.value = freq;
+      g.gain.setValueAtTime(vol, ctx.currentTime);
+      g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + dur);
+      o.connect(g);g.connect(ctx.destination);
+      o.start();o.stop(ctx.currentTime + dur);
+    }catch(e){}
+  }
+  soundBtn.addEventListener('click', ()=>{
+    soundOn = !soundOn;
+    soundBtn.textContent = soundOn ? '🔊 音' : '🔇 音';
+    soundBtn.classList.toggle('active', soundOn);
+    if(soundOn){ beep(660, 0.06); setTimeout(()=>beep(880, 0.08), 80); }
+  });
+  // PPT 翻页时插入提示音
+  const origShowSlide = showSlide;
+  showSlide = function(i){
+    const dir = (typeof i==='number' && i>pptIndex) ? 'next' : 'prev';
+    origShowSlide(i);
+    beep(dir == 'next' ? 660 : 440, 0.05, 'triangle', 0.03);
+  };
+
+  // ============ 打印讲义 ============
+  const printBtn = $('#printBtn');
+  printBtn.addEventListener('click', ()=>{
+    document.body.classList.add('print-mode');
+    setTimeout(()=>{
+      window.print();
+      setTimeout(()=>document.body.classList.remove('print-mode'), 500);
+    }, 300);
+  });
+  // 监听打印后自动恢复
+  window.addEventListener('afterprint', ()=>document.body.classList.remove('print-mode'));
+
+  // ============ 移动端汉堡菜单(目录) ============
+  // 已通过 CSS @media 自动变为横向滚动条
+
+  // ============ 触摸翻页(移动端) ============
+  let touchStartX = 0;
+  document.addEventListener('touchstart', e=>{
+    if(!document.body.classList.contains('ppt-mode')) return;
+    touchStartX = e.touches[0].clientX;
+  }, { passive:true });
+  document.addEventListener('touchend', e=>{
+    if(!document.body.classList.contains('ppt-mode')) return;
+    const dx = e.changedTouches[0].clientX - touchStartX;
+    if(Math.abs(dx) > 60){
+      showSlide(pptIndex + (dx<0 ? 1 : -1));
+    }
+  }, { passive:true });
+})();
+</script>
+</body>
+</html>
