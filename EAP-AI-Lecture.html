@@ -3,41 +3,57 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>EAP × AI · 60 分钟讲解</title>
+<title>EAP × AI · 我在 fab 用 AI 的工作流</title>
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
+
+/* ====== 明亮浅色主题 ====== */
 :root {
-  --bg: #0a0e1a;
-  --bg2: #131826;
-  --txt: #ffffff;
-  --txt2: #a8b2d1;
-  --acc: #00d4ff;
-  --acc2: #ff6b9d;
-  --acc3: #ffd166;
-  --acc4: #06d6a0;
-  --grad1: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  --grad2: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-  --grad3: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-  --grad4: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+  --bg: #fafbfc;
+  --bg-soft: #f1f5f9;
+  --paper: #ffffff;
+  --ink: #1a202c;
+  --ink-2: #4a5568;
+  --ink-3: #a0aec0;
+  --line: #e2e8f0;
+  --acc: #2563eb;      /* 蓝 */
+  --acc-2: #0891b2;    /* 青 */
+  --acc-3: #d97706;    /* 橙 */
+  --acc-4: #059669;    /* 绿 */
+  --acc-5: #dc2626;    /* 红 */
+  --acc-6: #7c3aed;    /* 紫 */
+  --grad-blue: linear-gradient(135deg, #2563eb, #60a5fa);
+  --grad-cyan: linear-gradient(135deg, #0891b2, #67e8f9);
+  --grad-orange: linear-gradient(135deg, #d97706, #fbbf24);
+  --grad-green: linear-gradient(135deg, #059669, #34d399);
+  --grad-red: linear-gradient(135deg, #dc2626, #f87171);
+  --grad-purple: linear-gradient(135deg, #7c3aed, #a78bfa);
+  --shadow-sm: 0 1px 2px rgba(15,23,42,0.05);
+  --shadow: 0 4px 14px rgba(15,23,42,0.08);
+  --shadow-lg: 0 12px 32px rgba(15,23,42,0.12);
 }
+
 html, body {
   background: var(--bg);
-  color: var(--txt);
-  font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+  color: var(--ink);
+  font-family: -apple-system, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Segoe UI", sans-serif;
   overflow: hidden;
   height: 100vh;
   width: 100vw;
+  font-feature-settings: "ss01" "cv11";
 }
+
+/* ====== 页面 ====== */
 .slide {
   position: fixed;
   inset: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 5vh 8vw;
+  padding: 4vh 6vw;
   opacity: 0;
   pointer-events: none;
-  transition: opacity 0.6s ease;
+  transition: opacity 0.5s ease;
   background: var(--bg);
   overflow-y: auto;
 }
@@ -50,1095 +66,1356 @@ html, body {
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(ellipse at 20% 30%, rgba(102,126,234,0.15) 0%, transparent 50%),
-    radial-gradient(ellipse at 80% 70%, rgba(240,147,251,0.10) 0%, transparent 50%);
+    radial-gradient(ellipse 60% 50% at 15% 20%, rgba(37,99,235,0.06) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 50% at 85% 80%, rgba(8,145,178,0.05) 0%, transparent 60%);
   pointer-events: none;
 }
 .slide-inner {
   position: relative;
   z-index: 2;
   width: 100%;
-  max-width: 1200px;
+  max-width: 1280px;
 }
+
+/* ====== 元素 ====== */
 .eyebrow {
-  display: inline-block;
-  font-size: 14px;
-  letter-spacing: 4px;
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 13px;
+  letter-spacing: 5px;
   color: var(--acc);
-  margin-bottom: 24px;
+  margin-bottom: 18px;
   text-transform: uppercase;
-  font-weight: 600;
+  font-weight: 700;
   opacity: 0;
   transform: translateY(20px);
-  animation: rise 0.6s 0.2s forwards;
+  animation: rise 0.6s 0.2s cubic-bezier(.2,.6,.2,1) forwards;
+}
+.eyebrow::before {
+  content: '';
+  width: 24px;
+  height: 2px;
+  background: var(--acc);
+  display: inline-block;
 }
 .title {
-  font-size: clamp(40px, 6vw, 84px);
+  font-size: clamp(36px, 5.5vw, 76px);
   font-weight: 800;
-  line-height: 1.1;
-  letter-spacing: -0.02em;
-  background: var(--grad1);
+  line-height: 1.15;
+  letter-spacing: -0.015em;
+  color: var(--ink);
+  margin-bottom: 18px;
+  opacity: 0;
+  transform: translateY(30px);
+  animation: rise 0.7s 0.4s cubic-bezier(.2,.6,.2,1) forwards;
+}
+.title .em {
+  background: var(--grad-blue);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
-  margin-bottom: 24px;
-  opacity: 0;
-  transform: translateY(40px);
-  animation: rise 0.8s 0.4s forwards;
 }
-.title.alt2 { background: var(--grad2); -webkit-background-clip: text; background-clip: text; }
-.title.alt3 { background: var(--grad3); -webkit-background-clip: text; background-clip: text; }
-.title.alt4 { background: var(--grad4); -webkit-background-clip: text; background-clip: text; }
-.title.white { background: none; -webkit-text-fill-color: white; color: white; }
-.subtitle {
-  font-size: clamp(18px, 2vw, 28px);
-  color: var(--txt2);
-  line-height: 1.6;
+.title .em2 { background: var(--grad-orange); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.title .em3 { background: var(--grad-green); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.sub {
+  font-size: clamp(16px, 1.4vw, 22px);
+  color: var(--ink-2);
+  line-height: 1.7;
+  max-width: 900px;
+  margin-bottom: 28px;
+  opacity: 0;
+  transform: translateY(20px);
+  animation: rise 0.7s 0.6s cubic-bezier(.2,.6,.2,1) forwards;
+}
+
+/* 流线分隔 */
+.hairline {
+  height: 1px;
+  background: linear-gradient(90deg, var(--acc) 0%, transparent 100%);
+  width: 0;
+  margin: 32px 0;
+  animation: line 0.9s 0.8s cubic-bezier(.2,.6,.2,1) forwards;
+}
+@keyframes line { to { width: 200px; } }
+
+/* ====== 卡片 ====== */
+.card-row {
+  display: grid;
+  gap: 20px;
+  margin: 32px 0;
+}
+.cols-2 { grid-template-columns: repeat(2, 1fr); }
+.cols-3 { grid-template-columns: repeat(3, 1fr); }
+.cols-4 { grid-template-columns: repeat(4, 1fr); }
+.card {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 28px 24px;
+  box-shadow: var(--shadow-sm);
+  position: relative;
+  overflow: hidden;
+  opacity: 0;
+  transform: translateY(30px) scale(0.97);
+  animation: pop 0.7s cubic-bezier(.2,.6,.2,1) forwards;
+}
+.card:hover { box-shadow: var(--shadow); }
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--grad-blue);
+}
+.card.c-cyan::before { background: var(--grad-cyan); }
+.card.c-orange::before { background: var(--grad-orange); }
+.card.c-green::before { background: var(--grad-green); }
+.card.c-red::before { background: var(--grad-red); }
+.card.c-purple::before { background: var(--grad-purple); }
+.card .tag {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  color: var(--acc);
+  background: rgba(37,99,235,0.08);
+  padding: 4px 10px;
+  border-radius: 999px;
+  margin-bottom: 12px;
+}
+.card.c-cyan .tag { color: var(--acc-2); background: rgba(8,145,178,0.08); }
+.card.c-orange .tag { color: var(--acc-3); background: rgba(217,119,6,0.08); }
+.card.c-green .tag { color: var(--acc-4); background: rgba(5,150,105,0.08); }
+.card.c-red .tag { color: var(--acc-5); background: rgba(220,38,38,0.08); }
+.card.c-purple .tag { color: var(--acc-6); background: rgba(124,58,237,0.08); }
+.card h3 {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 8px;
+  line-height: 1.3;
+}
+.card p {
+  font-size: 14px;
+  color: var(--ink-2);
+  line-height: 1.65;
+}
+.card .meta {
+  font-size: 12px;
+  color: var(--ink-3);
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px dashed var(--line);
+}
+
+/* 卡片浮起逐个延迟 */
+.card-row .card:nth-child(1) { animation-delay: 0.9s; }
+.card-row .card:nth-child(2) { animation-delay: 1.05s; }
+.card-row .card:nth-child(3) { animation-delay: 1.2s; }
+.card-row .card:nth-child(4) { animation-delay: 1.35s; }
+.card-row .card:nth-child(5) { animation-delay: 1.5s; }
+.card-row .card:nth-child(6) { animation-delay: 1.65s; }
+
+/* ====== 大数字 / KPI ====== */
+.big-number {
+  font-size: clamp(72px, 9vw, 130px);
+  font-weight: 900;
+  line-height: 1;
+  background: var(--grad-blue);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  margin: 16px 0;
+  opacity: 0;
+  transform: scale(0.7);
+  animation: pop 0.9s 0.5s cubic-bezier(.2,.8,.3,1.2) forwards;
+}
+.big-label {
+  font-size: 18px;
+  color: var(--ink-2);
   margin-bottom: 32px;
   opacity: 0;
   transform: translateY(20px);
-  animation: rise 0.8s 0.6s forwards;
+  animation: rise 0.7s 0.8s forwards;
 }
-.line {
-  display: block;
-  font-size: clamp(20px, 2.4vw, 32px);
-  color: var(--txt);
-  line-height: 1.5;
-  margin-bottom: 12px;
-  opacity: 0;
-  transform: translateY(20px);
-}
-.line.in { animation: rise 0.5s forwards; }
-.tag {
-  display: inline-block;
-  padding: 4px 12px;
-  border-radius: 999px;
-  background: rgba(0, 212, 255, 0.15);
-  border: 1px solid rgba(0, 212, 255, 0.3);
-  color: var(--acc);
-  font-size: 14px;
-  margin-right: 8px;
-  margin-bottom: 8px;
-}
-.cards {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 20px;
-  margin-top: 32px;
-}
-.card {
-  background: rgba(255,255,255,0.05);
-  border: 1px solid rgba(255,255,255,0.1);
-  border-radius: 16px;
-  padding: 24px;
-  backdrop-filter: blur(10px);
-  opacity: 0;
-  transform: translateY(30px);
-}
-.card.in { animation: rise 0.5s forwards; }
-.card-icon { font-size: 36px; margin-bottom: 12px; }
-.card-title { font-size: 20px; font-weight: 700; margin-bottom: 8px; }
-.card-desc { color: var(--txt2); font-size: 14px; line-height: 1.5; }
-.card.acc1 { border-color: rgba(102,126,234,0.5); }
-.card.acc1 .card-icon { color: #667eea; }
-.card.acc2 { border-color: rgba(240,147,251,0.5); }
-.card.acc2 .card-icon { color: #f093fb; }
-.card.acc3 { border-color: rgba(79,172,254,0.5); }
-.card.acc3 .card-icon { color: #4facfe; }
-.card.acc4 { border-color: rgba(67,233,123,0.5); }
-.card.acc4 .card-icon { color: #43e97b; }
-.timeline {
-  display: flex;
-  gap: 16px;
-  margin-top: 32px;
-  flex-wrap: wrap;
-}
-.timeline-item {
-  flex: 1;
-  min-width: 180px;
-  padding: 16px;
-  background: rgba(255,255,255,0.05);
-  border-radius: 12px;
-  border-left: 3px solid var(--acc);
-  opacity: 0;
-  transform: translateX(-20px);
-}
-.timeline-item.in { animation: slideR 0.5s forwards; }
-.timeline-year { color: var(--acc); font-weight: 700; font-size: 18px; }
-.timeline-text { color: var(--txt); font-size: 14px; margin-top: 4px; }
+
+/* ====== 列表行 ====== */
 .list-line {
   display: flex;
   align-items: flex-start;
   gap: 16px;
-  margin-bottom: 16px;
-  font-size: clamp(18px, 1.8vw, 24px);
+  padding: 18px 0;
+  border-bottom: 1px solid var(--line);
   opacity: 0;
   transform: translateX(-30px);
+  animation: slideR 0.6s cubic-bezier(.2,.6,.2,1) forwards;
 }
-.list-line.in { animation: slideR 0.5s forwards; }
-.list-num {
-  flex-shrink: 0;
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  background: var(--grad1);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.list-line:last-child { border-bottom: none; }
+.list-line .num {
+  font-size: 14px;
   font-weight: 700;
-  font-size: 16px;
-}
-.center-stage {
-  text-align: center;
+  color: var(--acc);
+  min-width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: rgba(37,99,235,0.08);
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 100%;
+  flex-shrink: 0;
 }
-.big {
-  font-size: clamp(80px, 14vw, 200px);
-  font-weight: 900;
-  background: var(--grad1);
+.list-line h4 {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 4px;
+}
+.list-line p {
+  font-size: 14px;
+  color: var(--ink-2);
+  line-height: 1.6;
+}
+.list-line:nth-of-type(1) { animation-delay: 0.9s; }
+.list-line:nth-of-type(2) { animation-delay: 1.05s; }
+.list-line:nth-of-type(3) { animation-delay: 1.2s; }
+.list-line:nth-of-type(4) { animation-delay: 1.35s; }
+.list-line:nth-of-type(5) { animation-delay: 1.5s; }
+.list-line:nth-of-type(6) { animation-delay: 1.65s; }
+
+/* ====== 时间轴 ====== */
+.timeline {
+  position: relative;
+  padding-left: 40px;
+  margin: 32px 0;
+}
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 12px;
+  top: 8px;
+  bottom: 8px;
+  width: 2px;
+  background: linear-gradient(180deg, var(--acc) 0%, var(--acc-2) 100%);
+}
+.t-item {
+  position: relative;
+  margin-bottom: 28px;
+  opacity: 0;
+  transform: translateX(-30px);
+  animation: slideR 0.6s cubic-bezier(.2,.6,.2,1) forwards;
+}
+.t-item::before {
+  content: '';
+  position: absolute;
+  left: -33px;
+  top: 6px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--paper);
+  border: 3px solid var(--acc);
+  box-shadow: 0 0 0 4px var(--bg);
+}
+.t-item .t-year {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--acc);
+  letter-spacing: 1.5px;
+  margin-bottom: 4px;
+}
+.t-item h4 {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 4px;
+}
+.t-item p {
+  font-size: 14px;
+  color: var(--ink-2);
+  line-height: 1.6;
+}
+.timeline .t-item:nth-child(1) { animation-delay: 0.9s; }
+.timeline .t-item:nth-child(2) { animation-delay: 1.05s; }
+.timeline .t-item:nth-child(3) { animation-delay: 1.2s; }
+.timeline .t-item:nth-child(4) { animation-delay: 1.35s; }
+.timeline .t-item:nth-child(5) { animation-delay: 1.5s; }
+
+/* ====== 表格 ====== */
+.tbl {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 24px 0;
+  background: var(--paper);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  opacity: 0;
+  transform: translateY(20px);
+  animation: rise 0.7s 0.9s forwards;
+}
+.tbl th {
+  background: var(--bg-soft);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--ink-2);
+  text-align: left;
+  padding: 14px 18px;
+  letter-spacing: 0.5px;
+  border-bottom: 1px solid var(--line);
+}
+.tbl td {
+  padding: 14px 18px;
+  font-size: 14px;
+  color: var(--ink);
+  border-bottom: 1px solid var(--line);
+  line-height: 1.55;
+}
+.tbl tr:last-child td { border-bottom: none; }
+.tbl tr:hover td { background: rgba(37,99,235,0.03); }
+.tbl .yes { color: var(--acc-4); font-weight: 700; }
+.tbl .no { color: var(--acc-5); font-weight: 700; }
+.tbl .mid { color: var(--acc-3); font-weight: 700; }
+
+/* ====== 步骤条 ====== */
+.steps {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 32px 0;
+  flex-wrap: wrap;
+}
+.step {
+  flex: 1;
+  min-width: 140px;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 18px 16px;
+  text-align: center;
+  opacity: 0;
+  transform: translateY(20px);
+  animation: rise 0.6s cubic-bezier(.2,.6,.2,1) forwards;
+}
+.step .step-num {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--acc);
+  letter-spacing: 1.5px;
+  margin-bottom: 6px;
+}
+.step h4 { font-size: 15px; font-weight: 700; color: var(--ink); margin-bottom: 4px; }
+.step p { font-size: 12px; color: var(--ink-2); line-height: 1.5; }
+.steps .step:nth-child(1) { animation-delay: 0.9s; }
+.steps .step:nth-child(2) { animation-delay: 1.05s; }
+.steps .step:nth-child(3) { animation-delay: 1.2s; }
+.steps .step:nth-child(4) { animation-delay: 1.35s; }
+.steps .step:nth-child(5) { animation-delay: 1.5s; }
+.steps .step:nth-child(6) { animation-delay: 1.65s; }
+.step-arrow {
+  color: var(--ink-3);
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+/* ====== 大字金句 ====== */
+.big-quote {
+  font-size: clamp(28px, 3.6vw, 50px);
+  font-weight: 700;
+  line-height: 1.4;
+  color: var(--ink);
+  margin: 32px 0;
+  opacity: 0;
+  transform: translateY(30px);
+  animation: rise 0.8s 0.5s cubic-bezier(.2,.6,.2,1) forwards;
+}
+.big-quote em {
+  font-style: normal;
+  background: var(--grad-blue);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
-  line-height: 1;
-  opacity: 0;
-  animation: pop 0.8s forwards;
 }
+
+/* ====== 中心过渡页 ====== */
+.center-stage {
+  text-align: center;
+}
+.center-stage .title { margin-bottom: 24px; }
+.center-stage .sub { margin: 0 auto 32px; }
+
+/* ====== 控件 ====== */
 .controls {
   position: fixed;
   bottom: 24px;
   left: 50%;
   transform: translateX(-50%);
-  display: flex;
-  gap: 12px;
-  z-index: 100;
-  background: rgba(0,0,0,0.5);
-  padding: 12px 20px;
+  background: var(--paper);
+  border: 1px solid var(--line);
   border-radius: 999px;
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255,255,255,0.1);
+  padding: 8px 6px;
+  display: flex;
+  gap: 4px;
+  box-shadow: var(--shadow);
+  z-index: 100;
 }
 .controls button {
+  border: none;
   background: transparent;
-  border: 1px solid rgba(255,255,255,0.2);
-  color: white;
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
+  color: var(--ink-2);
+  font-size: 13px;
+  padding: 8px 14px;
+  border-radius: 999px;
   cursor: pointer;
-  font-size: 16px;
+  font-weight: 600;
   transition: all 0.2s;
+  font-family: inherit;
 }
-.controls button:hover { background: rgba(255,255,255,0.1); }
-.progress {
-  position: fixed;
-  top: 0; left: 0; height: 3px;
-  background: var(--acc);
-  z-index: 100;
-  transition: width 0.4s ease;
-}
+.controls button:hover { background: var(--bg-soft); color: var(--ink); }
 .page-num {
   position: fixed;
-  top: 24px;
+  bottom: 24px;
   right: 32px;
-  color: var(--txt2);
-  font-size: 14px;
+  font-size: 12px;
+  color: var(--ink-3);
+  font-weight: 600;
+  letter-spacing: 1px;
   z-index: 100;
-  font-variant-numeric: tabular-nums;
+  background: var(--paper);
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+}
+.progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 3px;
+  background: var(--grad-blue);
+  z-index: 101;
+  transition: width 0.4s ease;
+  width: 0;
 }
 .toast {
   position: fixed;
-  bottom: 90px;
+  top: 24px;
   left: 50%;
   transform: translateX(-50%);
-  background: rgba(0,0,0,0.7);
-  color: white;
-  padding: 8px 16px;
+  background: var(--ink);
+  color: #fff;
+  font-size: 13px;
+  padding: 10px 18px;
   border-radius: 999px;
-  font-size: 14px;
-  z-index: 100;
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.3s;
+  z-index: 200;
+  font-weight: 600;
 }
 .toast.show { opacity: 1; }
-@keyframes rise {
-  to { opacity: 1; transform: translateY(0); }
-}
-@keyframes slideR {
-  to { opacity: 1; transform: translateX(0); }
-}
-@keyframes pop {
-  0% { opacity: 0; transform: scale(0.6); }
-  60% { transform: scale(1.05); }
-  to { opacity: 1; transform: scale(1); }
-}
-.cursor {
-  display: inline-block;
-  width: 2px;
-  height: 1em;
-  background: var(--acc);
-  margin-left: 4px;
-  animation: blink 1s infinite;
-  vertical-align: middle;
-}
-@keyframes blink { 50% { opacity: 0; } }
-.fade-in { opacity: 0; transition: opacity 0.8s ease; }
-.fade-in.in { opacity: 1; }
-.compare {
-  display: grid;
-  grid-template-columns: 1fr auto 1fr;
-  gap: 24px;
-  align-items: center;
-  margin-top: 32px;
-}
-.compare-col {
-  padding: 24px;
-  border-radius: 16px;
-  background: rgba(255,255,255,0.05);
-  opacity: 0;
-  transform: translateY(30px);
-}
-.compare-col.before { border-left: 3px solid #f5576c; }
-.compare-col.after { border-left: 3px solid #43e97b; }
-.compare-col.in { animation: rise 0.6s forwards; }
-.compare-arrow {
-  font-size: 48px;
-  background: var(--grad1);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-}
-.compare h3 { font-size: 22px; margin-bottom: 16px; }
-.compare ul { list-style: none; padding: 0; }
-.compare li { padding: 8px 0; color: var(--txt2); font-size: 16px; }
-.compare li::before { content: "· "; color: var(--acc); font-weight: bold; }
+
+/* ====== 动画关键帧 ====== */
+@keyframes rise { to { opacity: 1; transform: translateY(0); } }
+@keyframes slideR { to { opacity: 1; transform: translateX(0); } }
+@keyframes pop { to { opacity: 1; transform: translateY(0) scale(1); } }
+
+/* 字词级渐入(用于金句) */
+.fade-word { display: inline-block; opacity: 0; transform: translateY(8px); animation: rise 0.4s cubic-bezier(.2,.6,.2,1) forwards; }
+.fade-word:nth-child(1) { animation-delay: 0.7s; }
+.fade-word:nth-child(2) { animation-delay: 0.85s; }
+.fade-word:nth-child(3) { animation-delay: 1s; }
+.fade-word:nth-child(4) { animation-delay: 1.15s; }
+.fade-word:nth-child(5) { animation-delay: 1.3s; }
+.fade-word:nth-child(6) { animation-delay: 1.45s; }
+.fade-word:nth-child(7) { animation-delay: 1.6s; }
+
+/* ====== 打印模式 ====== */
 @media print {
   .controls, .page-num, .progress, .toast { display: none !important; }
-  .slide { opacity: 1 !important; position: relative !important; page-break-after: always; height: 100vh; overflow: hidden; }
+  html, body { overflow: visible; height: auto; }
+  .slide {
+    position: relative;
+    opacity: 1 !important;
+    pointer-events: auto;
+    page-break-after: always;
+    min-height: 100vh;
+  }
+  .slide::before { display: none; }
+  * { animation: none !important; opacity: 1 !important; transform: none !important; }
+}
+
+/* ====== 响应式 ====== */
+@media (max-width: 900px) {
+  .cols-2, .cols-3, .cols-4 { grid-template-columns: 1fr; }
+  .slide { padding: 6vh 5vw; }
 }
 </style>
 </head>
 <body>
 
 <div class="progress" id="progress"></div>
-<div class="page-num" id="pageNum">01 / 30</div>
+<div class="toast" id="toast"></div>
 
-<div class="controls">
-  <button onclick="prev()" title="上一页">←</button>
-  <button onclick="next()" title="下一页">→</button>
-  <button onclick="fullscreen()" title="全屏">⛶</button>
-  <button onclick="printMode()" title="打印">🖨</button>
-</div>
-<div class="toast" id="toast">按 ← → 翻页 · Space 下一页 · Esc 退出全屏</div>
-
-<!-- ============ 第 1 页 ============ -->
-<section class="slide" data-page="01">
-  <div class="slide-inner center-stage">
-    <div class="eyebrow">EAP · AI · 60 MINUTES</div>
-    <h1 class="title white" style="margin-bottom: 0;">我在 fab 用 AI 的工作流</h1>
-    <p class="subtitle" style="text-align: center; margin-top: 24px;">—— 一个 EAP 工程师的真实分享</p>
-    <p class="subtitle" style="text-align: center; margin-top: 8px; font-size: 16px;">2026 · 厂内分享 · v1.0</p>
+<!-- ========== 01 标题页 ========== -->
+<section class="slide active center-stage">
+  <div class="slide-inner">
+    <div class="eyebrow">EAP × AI · 内部分享</div>
+    <h1 class="title">我在 fab <span class="em">用 AI</span><br>的这一年</h1>
+    <p class="sub">从一个 EAP 工程师的视角,聊聊过去一年里,AI 是怎么改变我做 drv、查 log、写文档这些日常工作的</p>
+    <div class="hairline"></div>
+    <p style="font-size: 14px; color: var(--ink-3); margin-top: 8px;">
+      <span class="fade-word">60 分钟</span>
+      <span class="fade-word">·</span>
+      <span class="fade-word">30 页</span>
+      <span class="fade-word">·</span>
+      <span class="fade-word">7 个故事</span>
+    </p>
   </div>
 </section>
 
-<!-- ============ 第 2 页 ============ -->
-<section class="slide" data-page="02">
+<!-- ========== 02 我是谁 ========== -->
+<section class="slide">
   <div class="slide-inner">
-    <div class="eyebrow">PART 01 · 为什么今天讲这堂课</div>
-    <h2 class="title">你也感觉到了吧</h2>
-    <p class="subtitle">每天醒来,又有一个新工具出来了。Agent、Skill、MCP……到底有多少东西要学?</p>
-    <div class="list-line"><div class="list-num">1</div><div>工具日新月异,但你不知道怎么知道"哪些要学、哪些先放"</div></div>
-    <div class="list-line"><div class="list-num">2</div><div>你东做做西做做,做了一堆小工具,但没串起来</div></div>
-    <div class="list-line"><div class="list-num">3</div><div>你不是不想学,是不知道"自己不知道什么"</div></div>
+    <div class="eyebrow">关于我</div>
+    <h2 class="title">一个每天和 <span class="em">机台</span> 打交道的人</h2>
+    <div class="card-row cols-3">
+      <div class="card">
+        <div class="tag">领域</div>
+        <h3>EAP / 蚀刻区</h3>
+        <p>负责蚀刻区机台的设备自动化,SECS/GEM 通讯、drv.dll 驱动、ECS 上位机联调</p>
+      </div>
+      <div class="card c-cyan">
+        <div class="tag">日常</div>
+        <h3>VB / 日志 / MES</h3>
+        <p>每天看 SECS log、写 VB 脚本、对 MES 报工,和 TIBRV 消息打交道</p>
+      </div>
+      <div class="card c-orange">
+        <div class="tag">去年</div>
+        <h3>开始用 AI 写代码</h3>
+        <p>从 Copilot 补全,到后来让 AI 帮我读文档、写 drv、查 log</p>
+      </div>
+    </div>
+    <p class="sub" style="margin-top: 24px;">今天想分享的,不是 AI 多神奇,而是它怎么真的帮我<span class="em">省时间</span></p>
   </div>
 </section>
 
-<!-- ============ 第 3 页 ============ -->
-<section class="slide" data-page="03">
+<!-- ========== 03 为什么要讲 ========== -->
+<section class="slide">
   <div class="slide-inner">
-    <div class="eyebrow">PART 01 · 今天 60 分钟的 3 件事</div>
-    <h2 class="title alt2">3 件事,1 个搞不定的</h2>
-    <div class="cards">
-      <div class="card acc1">
-        <div class="card-icon">🧭</div>
-        <div class="card-title">AI 扫盲</div>
-        <div class="card-desc">知道 AI 现在走到哪、还有多少新东西、怎么持续跟上</div>
+    <div class="eyebrow">为什么讲这一课</div>
+    <h2 class="title">三个 <span class="em">真实的痛</span></h2>
+    <div class="card-row cols-3">
+      <div class="card c-red">
+        <div class="tag">痛点 1</div>
+        <h3>查 log 像大海捞针</h3>
+        <p>机台 alarm,翻 ECS log 半小时,最后发现是一个 HSMS timeout</p>
+        <div class="meta">每周至少 2-3 次</div>
       </div>
-      <div class="card acc2">
-        <div class="card-icon">🛠️</div>
-        <div class="card-title">工具对照</div>
-        <div class="card-desc">VS Code + Copilot / DSH / Codex,我们厂的分工</div>
+      <div class="card c-orange">
+        <div class="tag">痛点 2</div>
+        <h3>新人文档看三个月</h3>
+        <p>新人接手 drv,几百页 SECS 文档,看到第六周还不敢动手改</p>
+        <div class="meta">每个新人都经历过</div>
       </div>
-      <div class="card acc3">
-        <div class="card-icon">⚡</div>
-        <div class="card-title">EAP 实操</div>
-        <div class="card-desc">演示:捞 log / 写文档 / 改 VB 代码</div>
-      </div>
-      <div class="card acc4">
-        <div class="card-icon">❌</div>
-        <div class="card-title">搞不定的</div>
-        <div class="card-desc">我也还在学,讲完你也不会变成 AI 专家<br>但你会知道"接下来怎么走"</div>
+      <div class="card c-purple">
+        <div class="tag">痛点 3</div>
+        <h3>跨区问题来回拉会</h3>
+        <p>薄膜区报 recipe 错,蚀刻区查,黄光区再确认,一圈下来一周没了</p>
+        <div class="meta">跨区协作的日常</div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ============ 第 4 页 ============ -->
-<section class="slide" data-page="04">
+<!-- ========== 04 今天讲什么 ========== -->
+<section class="slide">
   <div class="slide-inner">
-    <div class="eyebrow">PART 02 · AI 扫盲</div>
-    <h2 class="title">AI 现在走到哪了</h2>
-    <p class="subtitle">从 2022 到 2026,AI 走完了 4 步路。我们 fab 用得最快的是第 3 步。</p>
+    <div class="eyebrow">今天讲什么</div>
+    <h2 class="title">三个 <span class="em">故事</span>,一条主线</h2>
+    <div class="list-line">
+      <div class="num">1</div>
+      <div>
+        <h4>我用 AI 的真实场景</h4>
+        <p>不是网上那种"AI 取代程序员"的故事,是 fab 里实实在在发生的事</p>
+      </div>
+    </div>
+    <div class="list-line">
+      <div class="num">2</div>
+      <div>
+        <h4>三套工具怎么配合</h4>
+        <p>Copilot 是主力,DSH 处理长文档,Codex 跑离线脚本,各有分工</p>
+      </div>
+    </div>
+    <div class="list-line">
+      <div class="num">3</div>
+      <div>
+        <h4>下一步能做什么</h4>
+        <p>把个人经验变成团队资产,让新人少踩我踩过的坑</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== PART 02 ========== -->
+<section class="slide center-stage">
+  <div class="slide-inner">
+    <div class="eyebrow">PART 02</div>
+    <h1 class="title">AI 这一年<br><span class="em">发生了什么</span></h1>
+    <p class="sub">先花 5 分钟,把大家都听过的那些 AI 名词,捋一遍</p>
+  </div>
+</section>
+
+<!-- ========== 06 时间轴 ========== -->
+<section class="slide">
+  <div class="slide-inner">
+    <div class="eyebrow">2022 — 2026</div>
+    <h2 class="title">四年时间,AI 从 <span class="em">聊天</span> 变成 <span class="em">干活</span></h2>
     <div class="timeline">
-      <div class="timeline-item" style="border-color: #667eea;">
-        <div class="timeline-year">2022</div>
-        <div class="timeline-text">ChatGPT 出现<br>你只需要聊天</div>
+      <div class="t-item">
+        <div class="t-year">2022.11</div>
+        <h4>ChatGPT 发布</h4>
+        <p>大家第一次发现,AI 能听懂人话,但只能聊天,不能动手</p>
       </div>
-      <div class="timeline-item" style="border-color: #f093fb;">
-        <div class="timeline-year">2023</div>
-        <div class="timeline-text">Copilot 上线<br>你只需要补全</div>
+      <div class="t-item">
+        <div class="t-year">2023.06</div>
+        <h4>GitHub Copilot 普及</h4>
+        <p>写代码从"AI 给建议"变成"AI 直接补全",工程师开始离不开</p>
       </div>
-      <div class="timeline-item" style="border-color: #43e97b;">
-        <div class="timeline-year">2024</div>
-        <div class="timeline-text">Agent 模式<br>AI 自己跑完整套</div>
+      <div class="t-item">
+        <div class="t-year">2024.04</div>
+        <h4>Agent / Skill 概念火起来</h4>
+        <p>AI 从"补全代码"升级到"能调用工具、能跑流程",开始像助手</p>
       </div>
-      <div class="timeline-item" style="border-color: #ffd166;">
-        <div class="timeline-year">2026</div>
-        <div class="timeline-text">Skill 生态<br>AI 按你厂规则干活</div>
+      <div class="t-item">
+        <div class="t-year">2025.02</div>
+        <h4>DeepSeek / 国产模型崛起</h4>
+        <p>不用翻墙也能用上顶级模型,fab 内网部署成为可能</p>
       </div>
-    </div>
-    <p class="subtitle" style="margin-top: 32px; font-size: 18px;">你厂 Copilot 现在就有 Agent 模式。<br>只是大多数人不知道,或者不敢用。</p>
-  </div>
-</section>
-
-<!-- ============ 第 5 页 ============ -->
-<section class="slide" data-page="05">
-  <div class="slide-inner">
-    <div class="eyebrow">PART 02 · AI 扫盲</div>
-    <h2 class="title alt3">未来 1-2 年会发生什么</h2>
-    <p class="subtitle">先说结论:别慌,别觉得"学完就够"</p>
-    <div class="cards">
-      <div class="card acc3">
-        <div class="card-icon">🧠</div>
-        <div class="card-title">模型更大</div>
-        <div class="card-desc">更强的推理、更长的上下文、更准的输出</div>
-      </div>
-      <div class="card acc4">
-        <div class="card-icon">🤖</div>
-        <div class="card-title">Agent 更强</div>
-        <div class="card-desc">从"读改报告"到"读改跑联调上线"</div>
-      </div>
-      <div class="card acc1">
-        <div class="card-icon">📚</div>
-        <div class="card-title">Skill 生态</div>
-        <div class="card-desc">每家公司、每个工程师会有自己的 Skill 库</div>
-      </div>
-      <div class="card acc2">
-        <div class="card-icon">🔁</div>
-        <div class="card-title">团队循环</div>
-        <div class="card-desc">多 Agent 协同,类似 fab 机台 + RPA + MES</div>
-      </div>
-    </div>
-    <p class="subtitle" style="margin-top: 24px; font-size: 18px; color: var(--acc);">真相:你学的 80% 知识 1 年后会过时。<br>只有 20% 不过时——你怎么想、怎么沟通、怎么拆解问题。<br>今天学的是这 20%。</p>
-  </div>
-</section>
-
-<!-- ============ 第 6 页 ============ -->
-<section class="slide" data-page="06">
-  <div class="slide-inner">
-    <div class="eyebrow">PART 02 · AI 扫盲</div>
-    <h2 class="title alt4">怎么持续跟上</h2>
-    <p class="subtitle">3 件事,1 个月节奏</p>
-    <div class="cards">
-      <div class="card acc1">
-        <div class="card-icon">📰</div>
-        <div class="card-title">每周:看 1 篇周报</div>
-        <div class="card-desc">我推荐 3 个:<br>· 机器之心 SOTA 周报<br>· Founder Park 早知道<br>· AI 前线 周末专栏</div>
-      </div>
-      <div class="card acc2">
-        <div class="card-icon">🔬</div>
-        <div class="card-title">每月:做 1 个 fab 实验</div>
-        <div class="card-desc">1 小时内,用 AI 做完 1 个 fab 小事<br>写下结果,自己复盘</div>
-      </div>
-      <div class="card acc3">
-        <div class="card-icon">🎤</div>
-        <div class="card-title">每季度:讲 1 次</div>
-        <div class="card-desc">讲之前必须先搞清楚<br>讲完你比同事多懂 50%</div>
+      <div class="t-item">
+        <div class="t-year">2026 现在</div>
+        <h4>AI 开始懂业务</h4>
+        <p>不只是写代码,还能读懂 SECS 协议、看懂机台 log、写工艺文档</p>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ============ 第 7 页 ============ -->
-<section class="slide" data-page="07">
-  <div class="slide-inner center-stage">
-    <div class="eyebrow">PART 02 → PART 03</div>
-    <h1 class="title">扫盲结束<br>开始讲工具</h1>
-    <p class="subtitle" style="text-align: center;">我们 fab 工程师能用的,其实就 3 件套</p>
-  </div>
-</section>
-
-<!-- ============ 第 8 页 ============ -->
-<section class="slide" data-page="08">
+<!-- ========== 07 关键变化 ========== -->
+<section class="slide">
   <div class="slide-inner">
-    <div class="eyebrow">PART 03 · 工具对照</div>
-    <h2 class="title">我们厂的 AI 工具库 = 3 件套</h2>
-    <p class="subtitle">不要纠结"哪个最好",你厂就这 3 件。</p>
-    <div class="cards">
-      <div class="card acc1">
-        <div class="card-icon">💻</div>
-        <div class="card-title">VS Code + Copilot(主力)</div>
-        <div class="card-desc">改代码 / 查问题 / Agent<br>限制:Agent 受加密约束,部分功能受限</div>
-      </div>
-      <div class="card acc2">
-        <div class="card-icon">📚</div>
-        <div class="card-title">DeepSeek Harness(中文)</div>
-        <div class="card-desc">中文问答 / Skill 加载 / 写文档<br>优势:本地可部署,适配企业通道</div>
-      </div>
-      <div class="card acc3">
-        <div class="card-icon">🧪</div>
-        <div class="card-title">Codex(探索长链)</div>
-        <div class="card-desc">加密微软 API / Oracle 加密 API<br>长链推理 / 复杂拆解 / 跨文件分析</div>
-      </div>
-    </div>
-    <p class="subtitle" style="margin-top: 24px; font-size: 18px; color: var(--acc);">分工:Copilot 80%、DSH 15%、Codex 5%。</p>
-  </div>
-</section>
-
-<!-- ============ 第 9 页 ============ -->
-<section class="slide" data-page="09">
-  <div class="slide-inner">
-    <div class="eyebrow">PART 03 · 工具对照</div>
-    <h2 class="title alt2">3 件套怎么选</h2>
-    <table style="width:100%; border-collapse: collapse; margin-top: 24px;">
+    <div class="eyebrow">关键变化</div>
+    <h2 class="title">AI 的角色,从 <span class="em">工具</span> 变成 <span class="em">同事</span></h2>
+    <table class="tbl">
       <thead>
-        <tr style="border-bottom: 2px solid rgba(255,255,255,0.2);">
-          <th style="text-align:left; padding: 12px; color: var(--acc);">维度</th>
-          <th style="text-align:left; padding: 12px;">VS Code + Copilot</th>
-          <th style="text-align:left; padding: 12px;">DSH</th>
-          <th style="text-align:left; padding: 12px;">Codex</th>
-        </tr>
+        <tr><th>阶段</th><th>AI 做什么</th><th>你怎么用</th><th>典型场景</th></tr>
       </thead>
       <tbody>
-        <tr style="border-bottom: 1px solid rgba(255,255,255,0.1);">
-          <td style="padding: 12px; color: var(--txt2);">界面</td>
-          <td style="padding: 12px;">GUI 嵌入式</td>
-          <td style="padding: 12px;">CLI / 网页</td>
-          <td style="padding: 12px;">CLI</td>
-        </tr>
-        <tr style="border-bottom: 1px solid rgba(255,255,255,0.1);">
-          <td style="padding: 12px; color: var(--txt2);">强项</td>
-          <td style="padding: 12px;">补全 / Chat / Agent</td>
-          <td style="padding: 12px;">中文 / 文档 / Skill</td>
-          <td style="padding: 12px;">长链推理</td>
-        </tr>
-        <tr style="border-bottom: 1px solid rgba(255,255,255,0.1);">
-          <td style="padding: 12px; color: var(--txt2);">适合</td>
-          <td style="padding: 12px;">改代码 / 查问题</td>
-          <td style="padding: 12px;">写文档 / 中文任务</td>
-          <td style="padding: 12px;">跨文件分析</td>
-        </tr>
-        <tr>
-          <td style="padding: 12px; color: var(--txt2);">你用多久</td>
-          <td style="padding: 12px;">80% 时间</td>
-          <td style="padding: 12px;">15% 时间</td>
-          <td style="padding: 12px;">5% 时间</td>
-        </tr>
+        <tr><td>2022-2023</td><td>给建议</td><td>复制粘贴</td><td>问"VB 怎么连数据库"</td></tr>
+        <tr><td>2023-2024</td><td>补全代码</td><td>IDE 里 Tab 接受</td><td>Copilot 补全 drv 函数</td></tr>
+        <tr><td>2024-2025</td><td>读文档 + 写代码</td><td>给 AI 看 log 和 spec</td><td>让 AI 分析 SECS 消息格式</td></tr>
+        <tr><td>2025-2026</td><td>跑流程</td><td>定义任务,AI 自动执行</td><td>Skill 一键生成测试报告</td></tr>
       </tbody>
     </table>
   </div>
 </section>
 
-<!-- ============ 第 10 页 ============ -->
-<section class="slide" data-page="10">
+<!-- ========== 08 未来 1-2 年 ========== -->
+<section class="slide">
   <div class="slide-inner">
-    <div class="eyebrow">PART 03 · 工具对照</div>
-    <h2 class="title alt3">你厂为什么没有那些工具</h2>
-    <p class="subtitle">不是我不想用,是装不上。</p>
-    <div class="cards">
-      <div class="card acc1">
-        <div class="card-icon">🌐</div>
-        <div class="card-title">外网下载受限</div>
-        <div class="card-desc">Cursor / Claude Code 等装不上<br>只能用企业通道内的工具</div>
+    <div class="eyebrow">未来 1-2 年</div>
+    <h2 class="title">三件事,大概率 <span class="em">会发生</span></h2>
+    <div class="card-row cols-3">
+      <div class="card">
+        <div class="tag">趋势 1</div>
+        <h3>AI 直接读机台数据</h3>
+        <p>不只是看 log,而是直接连 SECS/GEM 接口,实时分析 alarm 趋势</p>
       </div>
-      <div class="card acc2">
-        <div class="card-icon">🔐</div>
-        <div class="card-title">加密 API</div>
-        <div class="card-desc">只能走加密微软 API 或 Oracle 加密 API<br>不是 opencodex</div>
+      <div class="card c-cyan">
+        <div class="tag">趋势 2</div>
+        <h3>Skill 变成团队资产</h3>
+        <p>每个人写的 Skill 可以共享,新人入职第一天就有"老师傅"陪着</p>
       </div>
-      <div class="card acc3">
-        <div class="card-icon">🏢</div>
-        <div class="card-title">内网 / 生产网隔离</div>
-        <div class="card-desc">办公室 ≠ 厂区<br>通过桥接 server 通信</div>
-      </div>
-    </div>
-    <p class="subtitle" style="margin-top: 24px; font-size: 18px; color: var(--acc);">结论:不要看外面有什么,看你厂有什么。<br>你厂 3 件套够你用 2 年。</p>
-  </div>
-</section>
-
-<!-- ============ 第 11 页 ============ -->
-<section class="slide" data-page="11">
-  <div class="slide-inner center-stage">
-    <div class="eyebrow">PART 03 → PART 04</div>
-    <h1 class="title alt2">工具讲完<br>开始讲概念</h1>
-    <p class="subtitle" style="text-align: center;">3 个核心概念,讲清楚就能用</p>
-  </div>
-</section>
-
-<!-- ============ 第 12 页 ============ -->
-<section class="slide" data-page="12">
-  <div class="slide-inner">
-    <div class="eyebrow">PART 04 · 核心概念</div>
-    <h2 class="title">什么是 Agent</h2>
-    <p class="subtitle">类比 fab:自动化机台 = Agent,人工补全 = 补全</p>
-    <div class="compare">
-      <div class="compare-col before">
-        <h3>🤖 补全(以前)</h3>
-        <ul>
-          <li>你写一句,AI 接一句</li>
-          <li>AI 不能自己跑</li>
-          <li>AI 不能自己报告</li>
-        </ul>
-      </div>
-      <div class="compare-arrow">→</div>
-      <div class="compare-col after">
-        <h3>⚡ Agent(现在)</h3>
-        <ul>
-          <li>你给任务,AI 自己读文件</li>
-          <li>AI 自己改代码</li>
-          <li>AI 自己跑测试 + 报告</li>
-        </ul>
-      </div>
-    </div>
-    <p class="subtitle" style="margin-top: 24px; font-size: 18px; color: var(--acc);">Agent 的循环:读任务 → 读文件 → 改 → 跑 → 报告。<br>你只负责点头 ✅ 或 ❌。</p>
-  </div>
-</section>
-
-<!-- ============ 第 13 页 ============ -->
-<section class="slide" data-page="13">
-  <div class="slide-inner">
-    <div class="eyebrow">PART 04 · 核心概念</div>
-    <h2 class="title alt2">什么是子 Agent</h2>
-    <p class="subtitle">大任务拆成小任务,并行跑</p>
-    <div class="cards">
-      <div class="card acc1">
-        <div class="card-icon">👨‍🍳</div>
-        <div class="card-title">1 个 Agent</div>
-        <div class="card-desc">1 个厨师做 5 道菜<br>30 分钟</div>
-      </div>
-      <div class="card acc2">
-        <div class="card-icon">👨‍🍳👨‍🍳👨‍🍳</div>
-        <div class="card-title">子 Agent(并行)</div>
-        <div class="card-desc">3 个厨师各做 2 道<br>12 分钟</div>
-      </div>
-    </div>
-    <p class="subtitle" style="margin-top: 24px; font-size: 18px;">fab 例子:让 AI 改 1 个需求,Agent 自动拆成<br>"改 drv"、"写测试"、"改文档"、"跑测试" 4 个子任务并行跑。</p>
-  </div>
-</section>
-
-<!-- ============ 第 14 页 ============ -->
-<section class="slide" data-page="14">
-  <div class="slide-inner">
-    <div class="eyebrow">PART 04 · 核心概念</div>
-    <h2 class="title alt3">什么是 Skill</h2>
-    <p class="subtitle">类比 fab:SOP 作业指导书 = Skill</p>
-    <div class="compare">
-      <div class="compare-col before">
-        <h3>💬 普通提示词</h3>
-        <ul>
-          <li>每次都要重复说</li>
-          <li>"按我们厂的命名规范来"</li>
-          <li>"SECS 消息要有超时重试"</li>
-          <li>换同事又得再说一遍</li>
-        </ul>
-      </div>
-      <div class="compare-arrow">→</div>
-      <div class="compare-col after">
-        <h3>📋 Skill</h3>
-        <ul>
-          <li>写一次,永久生效</li>
-          <li>把规则写进文件</li>
-          <li>AI 加载后永远按它干活</li>
-          <li>团队共享,大家都用</li>
-        </ul>
-      </div>
-    </div>
-    <p class="subtitle" style="margin-top: 24px; font-size: 18px; color: var(--acc);">Skill = 写给 AI 的 SOP 文档。<br>我厂 EAP 至少需要 5 个 Skill,后面会讲。</p>
-  </div>
-</section>
-
-<!-- ============ 第 15 页 ============ -->
-<section class="slide" data-page="15">
-  <div class="slide-inner">
-    <div class="eyebrow">PART 04 · 核心概念</div>
-    <h2 class="title alt4">什么是 MCP</h2>
-    <p class="subtitle">类比 fab:SECS/GEM 通讯协议 = MCP</p>
-    <div class="compare">
-      <div class="compare-col before">
-        <h3>🗣 没有 MCP</h3>
-        <ul>
-          <li>你:复制日志 → 贴给 AI → AI 分析</li>
-          <li>AI 只能"嘴上说"</li>
-          <li>不能动你的电脑</li>
-        </ul>
-      </div>
-      <div class="compare-arrow">→</div>
-      <div class="compare-col after">
-        <h3>🔌 有 MCP</h3>
-        <ul>
-          <li>你:"分析最近 24h 的报错"</li>
-          <li>AI 自己读文件</li>
-          <li>AI 真的能动你电脑</li>
-        </ul>
-      </div>
-    </div>
-    <p class="subtitle" style="margin-top: 24px; font-size: 18px; color: var(--acc);">MCP = 让 AI 真的能动手的协议。<br>没有 MCP,AI 永远只能"出主意"。</p>
-  </div>
-</section>
-
-<!-- ============ 第 16 页 ============ -->
-<section class="slide" data-page="16">
-  <div class="slide-inner">
-    <div class="eyebrow">PART 04 · 核心概念</div>
-    <h2 class="title">什么是团队循环(Team Loop)</h2>
-    <p class="subtitle">类比 fab:机台 + RPA + MES 联动 = 团队循环</p>
-    <div class="cards">
-      <div class="card acc1">
-        <div class="card-icon">👤</div>
-        <div class="card-title">单 Agent</div>
-        <div class="card-desc">1 个 AI 自己跑完整套</div>
-      </div>
-      <div class="card acc2">
-        <div class="card-icon">👥</div>
-        <div class="card-title">多 Agent 协同</div>
-        <div class="card-desc">1 个写代码 + 1 个测试 + 1 个报告</div>
-      </div>
-      <div class="card acc3">
-        <div class="card-icon">🔁</div>
-        <div class="card-title">团队循环</div>
-        <div class="card-desc">写 → 测 → 报告 → 改,自动循环</div>
-      </div>
-    </div>
-    <p class="subtitle" style="margin-top: 24px; font-size: 18px;">现在 fab 用不上,但 1-2 年后会有。<br>你要知道这个方向,但不必现在懂。</p>
-  </div>
-</section>
-
-<!-- ============ 第 17 页 ============ -->
-<section class="slide" data-page="17">
-  <div class="slide-inner">
-    <div class="eyebrow">PART 04 · 核心概念</div>
-    <h2 class="title alt2">静态(Static)与子静态</h2>
-    <p class="subtitle">从一次性提示词 → 模板化提示词</p>
-    <div class="compare">
-      <div class="compare-col before">
-        <h3>📌 静态(Static)</h3>
-        <ul>
-          <li>写 1 次,用 1 次</li>
-          <li>类比 fab:临时卡关指令</li>
-          <li>例:"今天帮我看下这段代码"</li>
-        </ul>
-      </div>
-      <div class="compare-arrow">→</div>
-      <div class="compare-col after">
-        <h3>📐 子静态</h3>
-        <ul>
-          <li>把静态当"模板",嵌套复用</li>
-          <li>类比 fab:通用卡关脚本</li>
-          <li>例:"按 [命名规范] 审查 [代码]"</li>
-        </ul>
-      </div>
-    </div>
-    <p class="subtitle" style="margin-top: 24px; font-size: 18px; color: var(--acc);">演进路径:静态 → 子静态 → Skill → Agent → 团队循环</p>
-  </div>
-</section>
-
-<!-- ============ 第 18 页 ============ -->
-<section class="slide" data-page="18">
-  <div class="slide-inner center-stage">
-    <div class="eyebrow">PART 04 → PART 05</div>
-    <h1 class="title alt3">概念讲完<br>开始演示</h1>
-    <p class="subtitle" style="text-align: center;">3 个演示,真打开 IDE 给你们看</p>
-  </div>
-</section>
-
-<!-- ============ 第 19 页 ============ -->
-<section class="slide" data-page="19">
-  <div class="slide-inner">
-    <div class="eyebrow">PART 05 · EAP 实操</div>
-    <h2 class="title">演示 1:捞量产 log 自动化</h2>
-    <p class="subtitle">现场打开 VS Code + Copilot,看 Agent 自己捞 log</p>
-    <div class="cards">
-      <div class="card acc1">
-        <div class="card-icon">1</div>
-        <div class="card-title">任务</div>
-        <div class="card-desc">从 [蚀刻机台] 捞最近 24h<br>SECS 初始化 log,过滤 S2F41</div>
-      </div>
-      <div class="card acc2">
-        <div class="card-icon">2</div>
-        <div class="card-title">Agent 自己跑</div>
-        <div class="card-desc">SSH 桥接 → 捞 log → 过滤 → 报告</div>
-      </div>
-      <div class="card acc3">
-        <div class="card-icon">3</div>
-        <div class="card-title">你只负责点头</div>
-        <div class="card-desc">看 Agent 报告,点头 ✅ 或 ❌</div>
+      <div class="card c-orange">
+        <div class="tag">趋势 3</div>
+        <h3>跨区协作靠 AI 打通</h3>
+        <p>蚀刻、薄膜、黄光、CMP 的 log 和文档,AI 统一理解,不用来回拉会</p>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ============ 第 20 页 ============ -->
-<section class="slide" data-page="20">
+<!-- ========== 09 怎么跟得上 ========== -->
+<section class="slide">
   <div class="slide-inner">
-    <div class="eyebrow">PART 05 · EAP 实操</div>
-    <h2 class="title alt2">演示 2:用 Skill 生成上线文档</h2>
-    <p class="subtitle">现场打开 DSH,加载 eap-上线文档-SKILL,看 AI 按模板写</p>
-    <div class="cards">
-      <div class="card acc1">
-        <div class="card-icon">📥</div>
-        <div class="card-title">你输入</div>
-        <div class="card-desc">"这是今日变更点:[内容]"<br>+ 加载 eap-上线文档-SKILL</div>
-      </div>
-      <div class="card acc2">
-        <div class="card-icon">⚙️</div>
-        <div class="card-title">AI 自动</div>
-        <div class="card-desc">按模板拆成 3 份文档:<br>变更点 / 影响范围 / 回滚方案</div>
-      </div>
-      <div class="card acc3">
-        <div class="card-icon">📤</div>
-        <div class="card-title">你微调</div>
-        <div class="card-desc">10 分钟改完 → 提交</div>
-      </div>
+    <div class="eyebrow">怎么跟得上</div>
+    <h2 class="title">不用 <span class="em">追</span>,只要 <span class="em">用</span></h2>
+    <div class="big-quote">
+      不要试图搞懂所有 AI 新闻,<br>
+      只要把你 <em>手头的工作</em> 用 AI 重做一遍,<br>
+      你就已经领先 80% 的人。
     </div>
-    <p class="subtitle" style="margin-top: 24px; font-size: 18px; color: var(--acc);">改之前:3 小时。改之后:30 分钟。省 80%。</p>
+    <div class="hairline"></div>
+    <p class="sub">我自己就是这么过来的:从让 AI 帮我写一行 VB 开始,到现在让它帮我读整个 SECS 文档</p>
   </div>
 </section>
 
-<!-- ============ 第 21 页 ============ -->
-<section class="slide" data-page="21">
+<!-- ========== PART 03 ========== -->
+<section class="slide center-stage">
   <div class="slide-inner">
-    <div class="eyebrow">PART 05 · EAP 实操</div>
-    <h2 class="title alt3">演示 3:跨区机台问答</h2>
-    <p class="subtitle">现场问:黄光区机台和蚀刻区机台 SECS 初始化差异?</p>
-    <div class="compare">
-      <div class="compare-col before">
-        <h3>❌ 错误期望</h3>
-        <ul>
-          <li>以为 AI 能直接答</li>
-          <li>AI 给个模糊答案</li>
-          <li>你失望</li>
-        </ul>
-      </div>
-      <div class="compare-arrow">→</div>
-      <div class="compare-col after">
-        <h3>✅ 正确用法</h3>
-        <ul>
-          <li>把跨区同事给你的 wiki 贴给 AI</li>
-          <li>AI 帮你总结成 3 行</li>
-          <li>你立刻知道差异</li>
-        </ul>
-      </div>
-    </div>
-    <p class="subtitle" style="margin-top: 24px; font-size: 18px; color: var(--acc);">AI 不是万能的。需要你喂东西它才好用。</p>
+    <div class="eyebrow">PART 03</div>
+    <h1 class="title">三套 <span class="em">工具</span><br>各管一段</h1>
+    <p class="sub">公司给的三把刀,我用了一年,摸出了分工</p>
   </div>
 </section>
 
-<!-- ============ 第 22 页 ============ -->
-<section class="slide" data-page="22">
-  <div class="slide-inner center-stage">
-    <div class="eyebrow">PART 05 → PART 06</div>
-    <h1 class="title alt4">演示结束<br>讲讲你的工作流</h1>
-    <p class="subtitle" style="text-align: center;">6 大模块 × AI 对照表</p>
-  </div>
-</section>
-
-<!-- ============ 第 23 页 ============ -->
-<section class="slide" data-page="23">
+<!-- ========== 11 三件套 ========== -->
+<section class="slide">
   <div class="slide-inner">
-    <div class="eyebrow">PART 06 · EAP 工作流</div>
-    <h2 class="title">EAP 工程师的 6 大模块</h2>
-    <div class="cards">
-      <div class="card acc1">
-        <div class="card-icon">📥</div>
-        <div class="card-title">需求接入</div>
-        <div class="card-desc">用户提需求 → 你拆任务 → 排期</div>
+    <div class="eyebrow">三件套</div>
+    <h2 class="title">我的 <span class="em">主力</span>、<span class="em2">副手</span>、<span class="em3">特种兵</span></h2>
+    <div class="card-row cols-3">
+      <div class="card">
+        <div class="tag">主力 · 80%</div>
+        <h3>VS Code + Copilot</h3>
+        <p>日常写代码、改 drv、调 VB,Tab 补全 + 对话提问,几乎不离手</p>
+        <div class="meta">场景:写新 drv、改 bug、写脚本</div>
       </div>
-      <div class="card acc2">
-        <div class="card-icon">🏗</div>
-        <div class="card-title">环境搭建</div>
-        <div class="card-desc">捞 log / 还原 / 准备测试环境</div>
+      <div class="card c-cyan">
+        <div class="tag">副手 · 15%</div>
+        <h3>DSH (DeepSeek)</h3>
+        <p>处理长文档:SECS spec、机台 manual、历史履历,一次喂几百页</p>
+        <div class="meta">场景:读 spec、写文档、总结</div>
       </div>
-      <div class="card acc3">
-        <div class="card-icon">✏️</div>
-        <div class="card-title">代码修改</div>
-        <div class="card-desc">改 VB / 加卡关 / 改配置</div>
-      </div>
-      <div class="card acc4">
-        <div class="card-icon">🧪</div>
-        <div class="card-title">测试 + 文档</div>
-        <div class="card-desc">自测 / 互测 / 上线文档</div>
-      </div>
-      <div class="card acc1">
-        <div class="card-icon">🚨</div>
-        <div class="card-title">异常处理</div>
-        <div class="card-desc">捞 log / 分析 / 找根因</div>
-      </div>
-      <div class="card acc2">
-        <div class="card-icon">🌐</div>
-        <div class="card-title">跨区支持</div>
-        <div class="card-desc">不同机台 / 不同区</div>
+      <div class="card c-orange">
+        <div class="tag">特种兵 · 5%</div>
+        <h3>Codex (离线)</h3>
+        <p>内网环境跑独立脚本,比如批量解析 log、生成测试数据</p>
+        <div class="meta">场景:离线批处理、数据清洗</div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ============ 第 24 页 ============ -->
-<section class="slide" data-page="24">
+<!-- ========== 12 为什么 Copilot 是主力 ========== -->
+<section class="slide">
   <div class="slide-inner">
-    <div class="eyebrow">PART 06 · EAP 工作流</div>
-    <h2 class="title alt2">6 大模块 × AI 对照表</h2>
-    <table style="width:100%; border-collapse: collapse; margin-top: 24px; font-size: 14px;">
+    <div class="eyebrow">为什么是 Copilot</div>
+    <h2 class="title">因为它 <span class="em">长在</span> 我工作的地方</h2>
+    <div class="card-row cols-2">
+      <div class="card">
+        <div class="tag">场景 1</div>
+        <h3>写 drv 函数</h3>
+        <p>输入注释 // S1F1 连接请求,Copilot 直接补全整个函数体,包括 HSMS 头、SECS-II 格式、错误处理</p>
+        <div class="meta">省 60% 时间</div>
+      </div>
+      <div class="card c-cyan">
+        <div class="tag">场景 2</div>
+        <h3>改 VB 脚本</h3>
+        <p>选中一段老 VB,问"这段有没有更简洁的写法",Copilot 给出重构建议,还能解释为什么</p>
+        <div class="meta">省 40% 时间</div>
+      </div>
+    </div>
+    <p class="sub" style="margin-top: 24px;">关键:Copilot 在 VS Code 里,看到的就是我打开的文件,不用复制粘贴,不用切窗口</p>
+  </div>
+</section>
+
+<!-- ========== 13 DSH 处理长文档 ========== -->
+<section class="slide">
+  <div class="slide-inner">
+    <div class="eyebrow">DSH 的不可替代</div>
+    <h2 class="title">200 页 SECS spec,<span class="em">10 分钟</span> 读完</h2>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">STEP 1</div>
+        <h4>上传文档</h4>
+        <p>SECS-II spec PDF 直接拖进去</p>
+      </div>
+      <div class="step-arrow">→</div>
+      <div class="step">
+        <div class="step-num">STEP 2</div>
+        <h4>提问</h4>
+        <p>"S6F11 和 S6F12 的区别?"</p>
+      </div>
+      <div class="step-arrow">→</div>
+      <div class="step">
+        <div class="step-num">STEP 3</div>
+        <h4>拿答案</h4>
+        <p>带页码引用,可溯源</p>
+      </div>
+      <div class="step-arrow">→</div>
+      <div class="step">
+        <div class="step-num">STEP 4</div>
+        <h4>生成笔记</h4>
+        <p>输出 markdown,存档</p>
+      </div>
+    </div>
+    <p class="sub" style="margin-top: 24px;">以前读 spec 要一周,现在一下午能过三个机型的差异</p>
+  </div>
+</section>
+
+<!-- ========== 14 Codex 的离线价值 ========== -->
+<section class="slide">
+  <div class="slide-inner">
+    <div class="eyebrow">Codex 的离线场景</div>
+    <h2 class="title">内网 <span class="em">断网</span> 也能跑</h2>
+    <div class="card-row cols-2">
+      <div class="card c-orange">
+        <div class="tag">场景 1</div>
+        <h3>批量解析 log</h3>
+        <p>fab 内网环境,把 3 个月的 ECS log 批量解析,提取所有 alarm code 和频率</p>
+      </div>
+      <div class="card c-purple">
+        <div class="tag">场景 2</div>
+        <h3>生成测试数据</h3>
+        <p>离线生成 SECS 模拟消息,测试新 drv 的兼容性,不用连真机</p>
+      </div>
+    </div>
+    <p class="sub" style="margin-top: 24px;">Codex 跑的是加密 Microsoft API,在内网也能用,这是它最大的价值</p>
+  </div>
+</section>
+
+<!-- ========== 15 工具对比 ========== -->
+<section class="slide">
+  <div class="slide-inner">
+    <div class="eyebrow">横向对比</div>
+    <h2 class="title">三把刀,怎么 <span class="em">选</span></h2>
+    <table class="tbl">
       <thead>
-        <tr style="border-bottom: 2px solid rgba(255,255,255,0.2);">
-          <th style="text-align:left; padding: 8px; color: var(--acc);">模块</th>
-          <th style="text-align:left; padding: 8px;">改之前</th>
-          <th style="text-align:left; padding: 8px;">改之后</th>
-          <th style="text-align:left; padding: 8px;">省时</th>
-          <th style="text-align:left; padding: 8px;">工具</th>
-        </tr>
+        <tr><th>维度</th><th>Copilot</th><th>DSH</th><th>Codex</th></tr>
       </thead>
       <tbody>
-        <tr style="border-bottom: 1px solid rgba(255,255,255,0.1);">
-          <td style="padding: 8px;">需求拆解</td>
-          <td style="padding: 8px; color: var(--txt2);">问人/查 wiki</td>
-          <td style="padding: 8px;">AI 用跨区知识库回答</td>
-          <td style="padding: 8px; color: #43e97b;">60%</td>
-          <td style="padding: 8px;">DSH</td>
-        </tr>
-        <tr style="border-bottom: 1px solid rgba(255,255,255,0.1);">
-          <td style="padding: 8px;">捞量产 log</td>
-          <td style="padding: 8px; color: var(--txt2);">手动 SSH + grep</td>
-          <td style="padding: 8px;">AI 自动捞 + 分类</td>
-          <td style="padding: 8px; color: #43e97b;">70%</td>
-          <td style="padding: 8px;">Copilot</td>
-        </tr>
-        <tr style="border-bottom: 1px solid rgba(255,255,255,0.1);">
-          <td style="padding: 8px;">改 VB 代码</td>
-          <td style="padding: 8px; color: var(--txt2);">手动查 + 改</td>
-          <td style="padding: 8px;">AI 按知识库改 + 卡关</td>
-          <td style="padding: 8px; color: #43e97b;">70%</td>
-          <td style="padding: 8px;">Copilot</td>
-        </tr>
-        <tr style="border-bottom: 1px solid rgba(255,255,255,0.1);">
-          <td style="padding: 8px;">测试文档</td>
-          <td style="padding: 8px; color: var(--txt2);">手动写 1-2h</td>
-          <td style="padding: 8px;">AI 按模板 10 分钟</td>
-          <td style="padding: 8px; color: #43e97b;">80%</td>
-          <td style="padding: 8px;">DSH</td>
-        </tr>
-        <tr style="border-bottom: 1px solid rgba(255,255,255,0.1);">
-          <td style="padding: 8px;">上线文档 ×3</td>
-          <td style="padding: 8px; color: var(--txt2);">手动写 3h</td>
-          <td style="padding: 8px;">AI 按 3 个模板 30 分钟</td>
-          <td style="padding: 8px; color: #43e97b;">80%</td>
-          <td style="padding: 8px;">DSH</td>
-        </tr>
-        <tr style="border-bottom: 1px solid rgba(255,255,255,0.1);">
-          <td style="padding: 8px;">历史履历</td>
-          <td style="padding: 8px; color: var(--txt2);">手动补字段</td>
-          <td style="padding: 8px;">AI 按字段补 + 检查</td>
-          <td style="padding: 8px; color: #43e97b;">80%</td>
-          <td style="padding: 8px;">DSH</td>
-        </tr>
-        <tr style="border-bottom: 1px solid rgba(255,255,255,0.1);">
-          <td style="padding: 8px;">异常分析</td>
-          <td style="padding: 8px; color: var(--txt2);">人工读 log</td>
-          <td style="padding: 8px;">AI 推测根因 + 验证</td>
-          <td style="padding: 8px; color: #43e97b;">60%</td>
-          <td style="padding: 8px;">Copilot</td>
-        </tr>
-        <tr>
-          <td style="padding: 8px;">跨区支持</td>
-          <td style="padding: 8px; color: var(--txt2);">找人问</td>
-          <td style="padding: 8px;">AI 解释对方机台</td>
-          <td style="padding: 8px; color: #43e97b;">50%</td>
-          <td style="padding: 8px;">DSH</td>
-        </tr>
+        <tr><td>代码补全</td><td class="yes">强</td><td class="mid">一般</td><td class="mid">一般</td></tr>
+        <tr><td>长文档理解</td><td class="mid">一般</td><td class="yes">强</td><td class="no">弱</td></tr>
+        <tr><td>离线可用</td><td class="no">需联网</td><td class="no">需联网</td><td class="yes">可离线</td></tr>
+        <tr><td>内网部署</td><td class="mid">部分支持</td><td class="yes">支持</td><td class="yes">支持</td></tr>
+        <tr><td>上手难度</td><td class="yes">低</td><td class="mid">中</td><td class="mid">中</td></tr>
+        <tr><td>典型场景</td><td>写代码</td><td>读文档</td><td>批处理</td></tr>
       </tbody>
     </table>
   </div>
 </section>
 
-<!-- ============ 第 25 页 ============ -->
-<section class="slide" data-page="25">
+<!-- ========== PART 04 ========== -->
+<section class="slide center-stage">
   <div class="slide-inner">
-    <div class="eyebrow">PART 06 · EAP 工作流</div>
-    <h2 class="title alt3">我厂最该先做的 5 个 Skill</h2>
-    <p class="subtitle">本月就能写完,完成度 ×3</p>
-    <div class="cards">
-      <div class="card acc1">
-        <div class="card-icon">📋</div>
-        <div class="card-title">eap-测试文档-SKILL</div>
-        <div class="card-desc">测试环境 / 步骤 / 期望 / 实际<br>难度 ⭐</div>
+    <div class="eyebrow">PART 04</div>
+    <h1 class="title">几个 <span class="em">概念</span><br>听起来玄,其实简单</h1>
+    <p class="sub">Agent、Skill、MCP,这些词网上很多,我用 fab 的话给你翻译</p>
+  </div>
+</section>
+
+<!-- ========== 17 Agent ========== -->
+<section class="slide">
+  <div class="slide-inner">
+    <div class="eyebrow">Agent</div>
+    <h2 class="title">就是 <span class="em">帮你干活的人</span></h2>
+    <div class="big-quote">
+      Agent = 一个能 <em>自己想办法</em> 完成任务的助手,<br>
+      你只需要说"做什么",不用教"怎么做"。
+    </div>
+    <div class="card-row cols-3" style="margin-top: 32px;">
+      <div class="card">
+        <div class="tag">例子 1</div>
+        <h3>查 alarm</h3>
+        <p>你说"查一下昨天 ETCH-01 的 alarm",Agent 自己去连 log、解析、汇总</p>
       </div>
-      <div class="card acc2">
-        <div class="card-icon">📋</div>
-        <div class="card-title">eap-上线文档-SKILL</div>
-        <div class="card-desc">变更点 / 影响范围 / 回滚方案<br>难度 ⭐</div>
+      <div class="card c-cyan">
+        <div class="tag">例子 2</div>
+        <h3>写报告</h3>
+        <p>你说"生成这周 SPC 异常报告",Agent 去取数、画图、写结论</p>
       </div>
-      <div class="card acc3">
-        <div class="card-icon">📋</div>
-        <div class="card-title">eap-历史履历-SKILL</div>
-        <div class="card-desc">字段映射 + 自动填<br>难度 ⭐</div>
-      </div>
-      <div class="card acc4">
-        <div class="card-icon">📋</div>
-        <div class="card-title">eap-log-分析-SKILL</div>
-        <div class="card-desc">log 关键字段提取 + 异常模式<br>难度 ⭐⭐</div>
-      </div>
-      <div class="card acc1">
-        <div class="card-icon">📋</div>
-        <div class="card-title">eap-vb-改代码-SKILL</div>
-        <div class="card-desc">卡关点位置 + 改代码规范<br>难度 ⭐⭐</div>
+      <div class="card c-orange">
+        <div class="tag">例子 3</div>
+        <h3>改 drv</h3>
+        <p>你说"把 S1F1 的 timeout 改成 5 秒",Agent 定位代码、修改、测试</p>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ============ 第 26 页 ============ -->
-<section class="slide" data-page="26">
+<!-- ========== 18 Sub-Agent ========== -->
+<section class="slide">
   <div class="slide-inner">
-    <div class="eyebrow">PART 06 · EAP 工作流</div>
-    <h2 class="title alt4">改之前 vs 改之后</h2>
-    <div class="compare">
-      <div class="compare-col before">
-        <h3>🔴 改之前</h3>
-        <ul>
-          <li>改 1 个 SECS 报错:2-4 小时</li>
-          <li>写 1 个新功能 drv:1-2 天</li>
-          <li>查 1 个不熟的系统:问人 / 查文档</li>
-          <li>写周报:1 小时</li>
-        </ul>
+    <div class="eyebrow">Sub-Agent</div>
+    <h2 class="title">大 Agent 手下的 <span class="em">小组长</span></h2>
+    <div class="big-quote">
+      复杂任务拆给多个 Sub-Agent 并行做,<br>
+      最后由主 Agent 汇总,像 <em>项目经理带团队</em>。
+    </div>
+    <div class="steps" style="margin-top: 32px;">
+      <div class="step">
+        <div class="step-num">主 Agent</div>
+        <h4>接收任务</h4>
+        <p>"分析 ETCH 区三个月 alarm"</p>
       </div>
-      <div class="compare-arrow">→</div>
-      <div class="compare-col after">
-        <h3>🟢 改之后</h3>
-        <ul>
-          <li>改 1 个 SECS 报错:30-60 分钟</li>
-          <li>写 1 个新功能 drv:2-4 小时</li>
-          <li>查 1 个不熟的系统:AI 解释</li>
-          <li>写周报:10 分钟</li>
-        </ul>
+      <div class="step-arrow">→</div>
+      <div class="step">
+        <div class="step-num">Sub A</div>
+        <h4>拉 log</h4>
+        <p>连 ECS 取数据</p>
+      </div>
+      <div class="step-arrow">→</div>
+      <div class="step">
+        <div class="step-num">Sub B</div>
+        <h4>解析</h4>
+        <p>提取 alarm code</p>
+      </div>
+      <div class="step-arrow">→</div>
+      <div class="step">
+        <div class="step-num">Sub C</div>
+        <h4>汇总</h4>
+        <p>生成趋势图</p>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ============ 第 27 页 ============ -->
-<section class="slide" data-page="27">
-  <div class="slide-inner center-stage">
-    <div class="eyebrow">PART 06 → PART 07</div>
-    <h1 class="title">你今天能做的 3 件事</h1>
-    <p class="subtitle" style="text-align: center;">听完就走,不做就忘</p>
-  </div>
-</section>
-
-<!-- ============ 第 28 页 ============ -->
-<section class="slide" data-page="28">
+<!-- ========== 19 Skill ========== -->
+<section class="slide">
   <div class="slide-inner">
-    <div class="eyebrow">PART 07 · 课后行动</div>
-    <h2 class="title alt2">同事课后立刻能做的 3 件事</h2>
-    <div class="cards">
-      <div class="card acc1">
-        <div class="card-icon">1</div>
-        <div class="card-title">问 1 个 fab 的真实问题</div>
-        <div class="card-desc">打开 VS Code + Copilot Chat<br>例:"VB 里怎么把 long 转 byte 数组?"<br>看 AI 怎么回答</div>
+    <div class="eyebrow">Skill</div>
+    <h2 class="title">把 <span class="em">经验</span> 变成 <span class="em">模板</span></h2>
+    <div class="big-quote">
+      Skill = 你教 AI 的 <em>固定套路</em>,<br>
+      下次遇到同类问题,一键调用,不用重复教。
+    </div>
+    <div class="card-row cols-2" style="margin-top: 32px;">
+      <div class="card">
+        <div class="tag">我的 Skill 1</div>
+        <h3>SECS log 分析</h3>
+        <p>输入:log 文件路径 + 时间范围 → 输出:alarm 统计 + 异常时间点 + 可能原因</p>
       </div>
-      <div class="card acc2">
-        <div class="card-icon">2</div>
-        <div class="card-title">写 1 份 5 条的 AI SOP</div>
-        <div class="card-desc">挑一个 fab 主题:<br>· EAP 命名规范<br>· FDC 数据格式<br>· RCMS 报警等级<br>5 条就够</div>
-      </div>
-      <div class="card acc3">
-        <div class="card-icon">3</div>
-        <div class="card-title">用 Agent 改 1 个需求</div>
-        <div class="card-desc">Copilot Agent 模式<br>说:"帮我审查今天这个 commit"<br>看 AI 自己跑</div>
+      <div class="card c-cyan">
+        <div class="tag">我的 Skill 2</div>
+        <h3>drv 测试文档</h3>
+        <p>输入:drv 版本号 + 测试项 → 输出:标准测试报告模板,含 SECS 消息流</p>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ============ 第 29 页 ============ -->
-<section class="slide" data-page="29">
+<!-- ========== 20 MCP ========== -->
+<section class="slide">
   <div class="slide-inner">
-    <div class="eyebrow">PART 07 · 课后行动</div>
-    <h2 class="title alt3">我会持续分享</h2>
-    <p class="subtitle">3 个月后,我会讲第 2 课、第 4 课、第 5 课。</p>
-    <div class="cards">
-      <div class="card acc1">
-        <div class="card-icon">📅</div>
-        <div class="card-title">下次讲解</div>
-        <div class="card-desc">主题:文档自动化<br>(3 周后)<br>聚焦测试 / 上线 / 历史履历 3 个文档</div>
+    <div class="eyebrow">MCP</div>
+    <h2 class="title">AI 的 <span class="em">USB 接口</span></h2>
+    <div class="big-quote">
+      MCP = 让 AI 能 <em>连接外部工具</em> 的标准协议,<br>
+      就像 USB 让电脑能连各种外设。
+    </div>
+    <div class="card-row cols-3" style="margin-top: 32px;">
+      <div class="card">
+        <div class="tag">MCP 1</div>
+        <h3>文件系统</h3>
+        <p>AI 直接读你电脑上的 log、文档,不用复制粘贴</p>
       </div>
-      <div class="card acc2">
-        <div class="card-icon">💬</div>
-        <div class="card-title">讨论群</div>
-        <div class="card-desc">扫码加群<br>有问题一起讨论<br>看到好的 fab × AI 用法就分享</div>
+      <div class="card c-cyan">
+        <div class="tag">MCP 2</div>
+        <h3>数据库</h3>
+        <p>AI 直接查 MES 数据库,取 SPC 数据</p>
       </div>
-      <div class="card acc3">
-        <div class="card-icon">📚</div>
-        <div class="card-title">资料共享</div>
-        <div class="card-desc">PPT + Skill 模板<br>+ fab log API 文档<br>都会发到群里</div>
+      <div class="card c-orange">
+        <div class="tag">MCP 3</div>
+        <h3>API</h3>
+        <p>AI 调用 fab 内部 API,比如 RCMS 查询</p>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ============ 第 30 页 ============ -->
-<section class="slide" data-page="30">
-  <div class="slide-inner center-stage">
-    <div class="eyebrow">PART 07 · 收尾</div>
-    <h1 class="title alt4">谢谢</h1>
-    <p class="subtitle" style="text-align: center;">我也还在学,有问题一起讨论。</p>
-    <p class="subtitle" style="text-align: center; margin-top: 24px; color: var(--acc); font-size: 18px;">下一讲:文档自动化 — 3 周后见</p>
+<!-- ========== 21 Team Loop ========== -->
+<section class="slide">
+  <div class="slide-inner">
+    <div class="eyebrow">Team Loop</div>
+    <h2 class="title">AI 的 <span class="em">PDCA</span></h2>
+    <div class="big-quote">
+      Plan → Do → Check → Act,<br>
+      AI 也能 <em>自我迭代</em>,一次比一次做得好。
+    </div>
+    <div class="steps" style="margin-top: 32px;">
+      <div class="step">
+        <div class="step-num">PLAN</div>
+        <h4>定计划</h4>
+        <p>分析任务,拆解步骤</p>
+      </div>
+      <div class="step-arrow">→</div>
+      <div class="step">
+        <div class="step-num">DO</div>
+        <h4>执行</h4>
+        <p>调用工具,跑流程</p>
+      </div>
+      <div class="step-arrow">→</div>
+      <div class="step">
+        <div class="step-num">CHECK</div>
+        <h4>验证</h4>
+        <p>检查结果是否符合预期</p>
+      </div>
+      <div class="step-arrow">→</div>
+      <div class="step">
+        <div class="step-num">ACT</div>
+        <h4>优化</h4>
+        <p>记录经验,下次改进</p>
+      </div>
+    </div>
   </div>
 </section>
+
+<!-- ========== 22 Static / Sub-static ========== -->
+<section class="slide">
+  <div class="slide-inner">
+    <div class="eyebrow">Static / Sub-static</div>
+    <h2 class="title">AI 的 <span class="em">记忆</span> 和 <span class="em">笔记</span></h2>
+    <div class="card-row cols-2">
+      <div class="card">
+        <div class="tag">Static</div>
+        <h3>长期记忆</h3>
+        <p>跨会话记住的东西:你的代码风格、fab 的命名规范、常用的 SECS 消息格式</p>
+        <div class="meta">类似:老师傅的经验</div>
+      </div>
+      <div class="card c-cyan">
+        <div class="tag">Sub-static</div>
+        <h3>临时笔记</h3>
+        <p>单次会话记住的东西:今天查的 alarm、正在改的 drv 版本、刚读的 spec 章节</p>
+        <div class="meta">类似:便签纸</div>
+      </div>
+    </div>
+    <p class="sub" style="margin-top: 24px;">用好 Static,AI 会越来越懂你;用好 Sub-static,单次任务不会丢上下文</p>
+  </div>
+</section>
+
+<!-- ========== PART 05 ========== -->
+<section class="slide center-stage">
+  <div class="slide-inner">
+    <div class="eyebrow">PART 05</div>
+    <h1 class="title">三个 <span class="em">真实场景</span><br>我是怎么用的</h1>
+    <p class="sub">不吹概念,直接看我每天怎么用这三套工具</p>
+  </div>
+</section>
+
+<!-- ========== 24 场景 1: log 检索 ========== -->
+<section class="slide">
+  <div class="slide-inner">
+    <div class="eyebrow">场景 1</div>
+    <h2 class="title">查 alarm:从 <span class="em">30 分钟</span> 到 <span class="em">3 分钟</span></h2>
+    <table class="tbl">
+      <thead>
+        <tr><th>步骤</th><th>以前</th><th>现在</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>定位 log</td><td>ECS 里翻目录,找对应时间段</td><td>告诉 AI 机台号 + 时间,自动定位</td></tr>
+        <tr><td>读 log</td><td>肉眼扫,找 ERROR 关键字</td><td>AI 解析 SECS 消息,提取 alarm code</td></tr>
+        <tr><td>分析</td><td>凭经验猜可能原因</td><td>AI 对比历史 alarm,给出概率排序</td></tr>
+        <tr><td>记录</td><td>手动写进履历</td><td>AI 生成标准格式,一键存档</td></tr>
+      </tbody>
+    </table>
+    <p class="sub" style="margin-top: 24px;">上周 ETCH-03 报 S6F11 timeout,以前要查半小时,现在 3 分钟定位到 HSMS 连接问题</p>
+  </div>
+</section>
+
+<!-- ========== 25 场景 2: Skill 写文档 ========== -->
+<section class="slide">
+  <div class="slide-inner">
+    <div class="eyebrow">场景 2</div>
+    <h2 class="title">写测试文档:从 <span class="em">2 小时</span> 到 <span class="em">10 分钟</span></h2>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">以前</div>
+        <h4>复制旧模板</h4>
+        <p>找上次的测试报告</p>
+      </div>
+      <div class="step-arrow">→</div>
+      <div class="step">
+        <div class="step-num">改</div>
+        <h4>手动改版本号</h4>
+        <p>改 drv 版本、日期、测试项</p>
+      </div>
+      <div class="step-arrow">→</div>
+      <div class="step">
+        <div class="step-num">补</div>
+        <h4>补 SECS 消息流</h4>
+        <p>对照 spec 手打</p>
+      </div>
+      <div class="step-arrow">→</div>
+      <div class="step">
+        <div class="step-num">现在</div>
+        <h4>一键生成</h4>
+        <p>Skill 输入版本号,自动输出</p>
+      </div>
+    </div>
+    <p class="sub" style="margin-top: 24px;">我的 "drv 测试文档" Skill 已经跑了 20+ 次,每次省 1.5 小时</p>
+  </div>
+</section>
+
+<!-- ========== 26 场景 3: 跨区答疑 ========== -->
+<section class="slide">
+  <div class="slide-inner">
+    <div class="eyebrow">场景 3</div>
+    <h2 class="title">跨区问题:从 <span class="em">拉会一周</span> 到 <span class="em">当场解决</span></h2>
+    <div class="card-row cols-2">
+      <div class="card c-red">
+        <div class="tag">以前</div>
+        <h3>薄膜区报 recipe 错</h3>
+        <p>蚀刻区查 log → 怀疑是上游问题 → 拉黄光区开会 → 再拉薄膜区确认 → 一周过去</p>
+        <div class="meta">跨区协作的常态</div>
+      </div>
+      <div class="card c-green">
+        <div class="tag">现在</div>
+        <h3>AI 统一看三区 log</h3>
+        <p>AI 同时读蚀刻、薄膜、黄光的 ECS log,时间轴对齐,当场指出是薄膜区 recipe 参数下发延迟</p>
+        <div class="meta">30 分钟定位根因</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== PART 06 ========== -->
+<section class="slide center-stage">
+  <div class="slide-inner">
+    <div class="eyebrow">PART 06</div>
+    <h1 class="title">EAP 的 <span class="em">6 大模块</span><br>AI 能插哪里</h1>
+    <p class="sub">回到我们的本职工作,看看每个环节怎么用 AI 提效</p>
+  </div>
+</section>
+
+<!-- ========== 28 6 大模块 ========== -->
+<section class="slide">
+  <div class="slide-inner">
+    <div class="eyebrow">EAP 6 大模块</div>
+    <h2 class="title">一张图,看 <span class="em">全局</span></h2>
+    <div class="card-row cols-3">
+      <div class="card">
+        <div class="tag">模块 1</div>
+        <h3>drv 开发</h3>
+        <p>SECS/GEM 驱动编写,机台通讯联调</p>
+      </div>
+      <div class="card c-cyan">
+        <div class="tag">模块 2</div>
+        <h3>ECS 运维</h3>
+        <p>上位机系统维护,host/vfei/secs 消息监控</p>
+      </div>
+      <div class="card c-orange">
+        <div class="tag">模块 3</div>
+        <h3>log 分析</h3>
+        <p>ECS log、SECS log 解析,alarm 定位</p>
+      </div>
+      <div class="card c-green">
+        <div class="tag">模块 4</div>
+        <h3>MES 对接</h3>
+        <p>报工、recipe 管理、WIP 追踪</p>
+      </div>
+      <div class="card c-red">
+        <div class="tag">模块 5</div>
+        <h3>文档编写</h3>
+        <p>测试文档、操作手册、履历记录</p>
+      </div>
+      <div class="card c-purple">
+        <div class="tag">模块 6</div>
+        <h3>跨区协作</h3>
+        <p>蚀刻 / 薄膜 / 黄光 / CMP 联调</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== 29 AI 介入对比 ========== -->
+<section class="slide">
+  <div class="slide-inner">
+    <div class="eyebrow">AI 介入对比</div>
+    <h2 class="title">每个模块,<span class="em">前后对比</span></h2>
+    <table class="tbl">
+      <thead>
+        <tr><th>模块</th><th>以前</th><th>现在</th><th>省多少时间</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>drv 开发</td><td>对照 spec 手打,调试靠猜</td><td>Copilot 补全 + AI 解读 spec</td><td class="yes">50%</td></tr>
+        <tr><td>ECS 运维</td><td>肉眼盯消息,alarm 靠经验</td><td>AI 监控异常模式,提前预警</td><td class="yes">40%</td></tr>
+        <tr><td>log 分析</td><td>翻目录、grep、猜原因</td><td>AI 解析 + 历史对比 + 根因排序</td><td class="yes">70%</td></tr>
+        <tr><td>MES 对接</td><td>手动对报工,Excel 核对</td><td>AI 自动对账,异常高亮</td><td class="yes">60%</td></tr>
+        <tr><td>文档编写</td><td>复制模板,手动改</td><td>Skill 一键生成,自动填版本</td><td class="yes">80%</td></tr>
+        <tr><td>跨区协作</td><td>拉会、邮件、电话</td><td>AI 统一读三区 log,当场定位</td><td class="yes">70%</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ========== 30 5 个 Skill 范例 ========== -->
+<section class="slide">
+  <div class="slide-inner">
+    <div class="eyebrow">5 个 Skill 范例</div>
+    <h2 class="title">我已经在用的 <span class="em">模板</span></h2>
+    <div class="card-row cols-2">
+      <div class="card">
+        <div class="tag">Skill 1</div>
+        <h3>SECS log 分析</h3>
+        <p>输入:log 路径 + 时间 → 输出:alarm 统计 + 异常点 + 可能原因</p>
+      </div>
+      <div class="card c-cyan">
+        <div class="tag">Skill 2</div>
+        <h3>drv 测试报告</h3>
+        <p>输入:版本号 + 测试项 → 输出:标准测试文档,含 SECS 消息流</p>
+      </div>
+      <div class="card c-orange">
+        <div class="tag">Skill 3</div>
+        <h3>机台 alarm 日报</h3>
+        <p>输入:日期 → 输出:当日 alarm 汇总 + 趋势图 + 处理建议</p>
+      </div>
+      <div class="card c-green">
+        <div class="tag">Skill 4</div>
+        <h3>SECS spec 速查</h3>
+        <p>输入:消息编号 → 输出:格式说明 + 示例 + 常见错误</p>
+      </div>
+      <div class="card c-purple">
+        <div class="tag">Skill 5</div>
+        <h3>跨区 log 对齐</h3>
+        <p>输入:三区 log → 输出:时间轴对齐 + 关联事件 + 根因定位</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== 31 前后对比大数字 ========== -->
+<section class="slide center-stage">
+  <div class="slide-inner">
+    <div class="eyebrow">一年下来</div>
+    <h2 class="title">我的时间,省在了 <span class="em">哪里</span></h2>
+    <div class="card-row cols-3" style="margin-top: 32px;">
+      <div class="card">
+        <div class="big-number">60%</div>
+        <div class="big-label">查 log 时间</div>
+        <p>从每周 10 小时 → 4 小时</p>
+      </div>
+      <div class="card c-cyan">
+        <div class="big-number">75%</div>
+        <div class="big-label">写文档时间</div>
+        <p>从每周 6 小时 → 1.5 小时</p>
+      </div>
+      <div class="card c-orange">
+        <div class="big-number">50%</div>
+        <div class="big-label">跨区沟通</div>
+        <p>从每周 8 小时 → 4 小时</p>
+      </div>
+    </div>
+    <p class="sub" style="margin-top: 32px;">省下来的时间,我用来做了两件以前没时间做的事:写 Skill 模板、带新人</p>
+  </div>
+</section>
+
+<!-- ========== PART 07 ========== -->
+<section class="slide center-stage">
+  <div class="slide-inner">
+    <div class="eyebrow">PART 07</div>
+    <h1 class="title">你可以 <span class="em">带走</span><br>的三件事</h1>
+    <p class="sub">听完这堂课,明天就能开始做的</p>
+  </div>
+</section>
+
+<!-- ========== 33 三件事 ========== -->
+<section class="slide">
+  <div class="slide-inner">
+    <div class="eyebrow">三件事</div>
+    <h2 class="title">明天 <span class="em">上班</span> 就能做</h2>
+    <div class="card-row cols-3">
+      <div class="card">
+        <div class="tag">第 1 件</div>
+        <h3>装 Copilot</h3>
+        <p>VS Code 插件,5 分钟装好,明天写代码就开始用 Tab 补全</p>
+        <div class="meta">难度:低 | 收益:即时</div>
+      </div>
+      <div class="card c-cyan">
+        <div class="tag">第 2 件</div>
+        <h3>传一个 spec 给 DSH</h3>
+        <p>找一份你最近要读的 SECS 文档,传上去,问一个问题试试</p>
+        <div class="meta">难度:低 | 收益:体验长文档</div>
+      </div>
+      <div class="card c-orange">
+        <div class="tag">第 3 件</div>
+        <h3>写第一个 Skill</h3>
+        <p>挑一个你重复做了 3 次以上的任务,把步骤写成模板,让 AI 帮你跑</p>
+        <div class="meta">难度:中 | 收益:长期</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== 34 持续分享 ========== -->
+<section class="slide">
+  <div class="slide-inner">
+    <div class="eyebrow">持续分享</div>
+    <h2 class="title">一个人的 AI 是 <span class="em">工具</span>,<br>一群人的 AI 是 <span class="em">资产</span></h2>
+    <div class="list-line">
+      <div class="num">1</div>
+      <div>
+        <h4>Skill 共享库</h4>
+        <p>把每个人写的 Skill 集中管理,新人入职就能用</p>
+      </div>
+    </div>
+    <div class="list-line">
+      <div class="num">2</div>
+      <div>
+        <h4>每周 15 分钟分享</h4>
+        <p>轮值分享一个 AI 使用技巧,不用准备 PPT,口头讲就行</p>
+      </div>
+    </div>
+    <div class="list-line">
+      <div class="num">3</div>
+      <div>
+        <h4>问题收集表</h4>
+        <p>把大家遇到的 AI 问题收集起来,我统一解答或找资源</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== 35 结束页 ========== -->
+<section class="slide center-stage">
+  <div class="slide-inner">
+    <div class="eyebrow">谢谢</div>
+    <h1 class="title">AI 不是来 <span class="em">取代</span> 我们的,<br>是来 <span class="em">放大</span> 我们的</h1>
+    <p class="sub">一个 EAP 工程师的 AI 实践 · 2026</p>
+    <div class="hairline"></div>
+    <p style="font-size: 14px; color: var(--ink-3); margin-top: 16px;">
+      <span class="fade-word">问题?</span>
+      <span class="fade-word">想法?</span>
+      <span class="fade-word">随时找我聊</span>
+    </p>
+  </div>
+</section>
+
+<!-- ========== 控件 ========== -->
+<div class="controls">
+  <button onclick="prev()">← 上一页</button>
+  <button onclick="next()">下一页 →</button>
+  <button onclick="toggleFullscreen()">全屏</button>
+  <button onclick="window.print()">打印 / 导出 PDF</button>
+</div>
+<div class="page-num" id="pageNum">1 / 35</div>
 
 <script>
 const slides = document.querySelectorAll('.slide');
-let current = 0;
 const total = slides.length;
-const progressEl = document.getElementById('progress');
-const pageNumEl = document.getElementById('pageNum');
+let cur = 0;
 
-function show(n) {
-  if (n < 0) n = 0;
-  if (n >= total) n = total - 1;
-  slides.forEach((s, i) => {
-    s.classList.toggle('active', i === n);
-  });
-  current = n;
-  pageNumEl.textContent = String(n + 1).padStart(2, '0') + ' / ' + String(total).padStart(2, '0');
-  progressEl.style.width = ((n + 1) / total * 100) + '%';
+function show(i) {
+  if (i < 0) i = 0;
+  if (i >= total) i = total - 1;
+  slides[cur].classList.remove('active');
+  cur = i;
+  slides[cur].classList.add('active');
+  document.getElementById('pageNum').textContent = (cur + 1) + ' / ' + total;
+  document.getElementById('progress').style.width = ((cur + 1) / total * 100) + '%';
 }
-
-function next() { show(current + 1); }
-function prev() { show(current - 1); }
-
-function fullscreen() {
-  if (!document.fullscreenElement) {
-    document.documentElement.requestFullscreen();
-  } else {
-    document.exitFullscreen();
-  }
+function next() { show(cur + 1); }
+function prev() { show(cur - 1); }
+function toggleFullscreen() {
+  if (!document.fullscreenElement) document.documentElement.requestFullscreen();
+  else document.exitFullscreen();
 }
-
-function printMode() {
-  window.print();
+function toast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 1800);
 }
 
 document.addEventListener('keydown', e => {
@@ -1146,15 +1423,18 @@ document.addEventListener('keydown', e => {
   else if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); prev(); }
   else if (e.key === 'Home') { e.preventDefault(); show(0); }
   else if (e.key === 'End') { e.preventDefault(); show(total - 1); }
-  else if (e.key === 'Escape') { if (document.fullscreenElement) document.exitFullscreen(); }
+  else if (e.key === 'f' || e.key === 'F') toggleFullscreen();
 });
 
-show(0);
-setTimeout(() => {
-  const t = document.getElementById('toast');
-  t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 3000);
-}, 800);
+document.getElementById('progress').style.width = (1 / total * 100) + '%';
+
+// 触摸滑动支持
+let touchX = 0;
+document.addEventListener('touchstart', e => { touchX = e.touches[0].clientX; });
+document.addEventListener('touchend', e => {
+  const dx = e.changedTouches[0].clientX - touchX;
+  if (Math.abs(dx) > 50) { dx < 0 ? next() : prev(); }
+});
 </script>
 
 </body>
