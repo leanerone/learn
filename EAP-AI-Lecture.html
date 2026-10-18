@@ -840,6 +840,94 @@ html, body {
   font-style: italic;
 }
 
+/* ====== v5 动效系统(学习自开源 PPT skill:html-ppt-skill 47 动效 / guizang 编辑部排版 / html-slides 去 AI 感) ====== */
+
+/* -- 翻页转场:方向感知滑移 -- */
+.slide {
+  transition: opacity 0.55s cubic-bezier(.22,.61,.21,1), transform 0.55s cubic-bezier(.22,.61,.21,1);
+  overflow-x: hidden;
+}
+.slide.from-r { transform: translateX(7%) scale(0.99); }
+.slide.from-l { transform: translateX(-7%) scale(0.99); }
+.slide.exit-l { transform: translateX(-3%); }
+.slide.exit-r { transform: translateX(3%); }
+.slide.active { transform: translateX(0) scale(1); }
+
+/* -- 非当前页动画全部暂停:翻到哪页,哪页才开始演(修复"加载时 39 页动画全播完"的问题) -- */
+.slide:not(.active) * { animation-play-state: paused !important; }
+
+/* -- 环境光斑缓慢漂移(仅当前页) -- */
+.slide.active::before { animation: drift 26s ease-in-out infinite alternate; }
+@keyframes drift {
+  from { transform: translate(0, 0) scale(1); }
+  to { transform: translate(2.5%, -2%) scale(1.08); }
+}
+
+/* -- 噪点纸感 + 装饰大页码(去塑料感 / AI 感) -- */
+body::after {
+  content: '';
+  position: fixed; inset: 0;
+  z-index: 95; pointer-events: none; opacity: 0.5;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='matrix' values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.05 0'/></filter><rect width='160' height='160' filter='url(%23n)'/></svg>");
+}
+#decoNum {
+  position: fixed; right: 0.5vw; bottom: -7vh;
+  font-size: 42vh; font-weight: 900; line-height: 1; letter-spacing: -0.04em;
+  color: var(--ink); opacity: 0.05; z-index: 85;
+  pointer-events: none; user-select: none;
+}
+
+/* -- 标题:逐字遮罩揭示 + 渐变字缓慢流动 -- */
+.title { opacity: 1; transform: none; animation: none; }
+.title .tl { display: inline-block; overflow: hidden; vertical-align: bottom; padding-bottom: 0.1em; margin-bottom: -0.1em; }
+.title .tl > span { display: inline-block; transform: translateY(115%); will-change: transform; }
+.slide.active .title .tl > span { animation: maskUp 0.72s cubic-bezier(.19,.66,.22,1) forwards; }
+@keyframes maskUp { to { transform: translateY(0); } }
+.title .em, .title .em2, .title .em3, .big-quote em { background-size: 220% 220%; }
+.slide.active .title .em, .slide.active .title .em2, .slide.active .title .em3, .slide.active .big-quote em {
+  animation: gradFlow 7s ease-in-out infinite;
+}
+@keyframes gradFlow {
+  0%, 100% { background-position: 0% 40%; }
+  50% { background-position: 100% 60%; }
+}
+
+/* -- 入场质感升级:模糊渐入 -- */
+@keyframes rise { from { opacity: 0; transform: translateY(20px); filter: blur(4px); } to { opacity: 1; transform: translateY(0); filter: blur(0); } }
+@keyframes pop { from { opacity: 0; transform: translateY(30px) scale(0.96); filter: blur(5px); } to { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); } }
+@keyframes slideR { from { opacity: 0; transform: translateX(-30px); filter: blur(4px); } to { opacity: 1; transform: translateX(0); filter: blur(0); } }
+
+/* -- 卡片去 AI 感:收敛彩虹顶条,统一单色 hover 亮条 -- */
+.card { border-radius: 12px; transition: box-shadow 0.3s ease; }
+.card::before, .card.c-cyan::before, .card.c-orange::before, .card.c-green::before, .card.c-red::before, .card.c-purple::before {
+  background: var(--acc); height: 3px;
+  transform: scaleX(0); transform-origin: left center;
+  transition: transform 0.4s cubic-bezier(.2,.6,.2,1);
+}
+.card:hover::before { transform: scaleX(1); }
+.card:hover { box-shadow: var(--shadow-lg); }
+
+/* -- 衍生图连接器:箭头擦除生长 -- */
+.flow-connector .fc-arrow { clip-path: inset(0 100% 0 0); }
+.slide.active .flow-connector .fc-arrow { animation: wipeR 0.45s cubic-bezier(.2,.6,.2,1) forwards; animation-delay: inherit; }
+@keyframes wipeR { to { clip-path: inset(0 -5% 0 0); } }
+
+/* -- 步骤箭头脉冲 / 时间轴圆点呼吸 -- */
+.slide.active .step-arrow { animation: arrowPulse 1.8s ease-in-out infinite; }
+@keyframes arrowPulse { 0%,100% { opacity: 0.45; transform: translateX(0); } 50% { opacity: 1; transform: translateX(4px); } }
+.slide.active .t-item::before { animation: dotPulse 2.4s ease-in-out infinite; }
+@keyframes dotPulse { 0%,100% { box-shadow: 0 0 0 6px var(--bg); } 50% { box-shadow: 0 0 0 6px var(--bg), 0 0 0 12px rgba(37,99,235,0.10); } }
+
+/* -- 自填框:斜纹缓慢流动 -- */
+.slide.active .fill-blank { animation: rise 0.7s 0.8s forwards, dashDrift 26s linear infinite; }
+@keyframes dashDrift { to { background-position: 408px 0; } }
+
+/* -- 打印补充 -- */
+@media print {
+  body::after, #decoNum { display: none !important; }
+  .title .tl > span { transform: none !important; }
+}
+
 /* ====== 响应式 ====== */
 @media (max-width: 900px) {
   .cols-2, .cols-3, .cols-4 { grid-template-columns: 1fr; }
@@ -1920,6 +2008,7 @@ html, body {
   <button onclick="toggleFullscreen()">全屏</button>
   <button onclick="window.print()">打印 / 导出 PDF</button>
 </div>
+<div id="decoNum" aria-hidden="true">01</div>
 <div class="page-num" id="pageNum">1 / 39</div>
 
 <script>
@@ -1927,14 +2016,85 @@ const slides = document.querySelectorAll('.slide');
 const total = slides.length;
 let cur = 0;
 
-function show(i) {
+/* ====== v5:标题逐字遮罩分包(中文按字、英文数字按词、em 渐变字整体) ====== */
+function splitTitle(title) {
+  const nodes = Array.from(title.childNodes);
+  title.innerHTML = '';
+  let idx = 0;
+  const nextDelay = () => (0.3 + (idx++) * 0.04).toFixed(2) + 's';
+  function pushUnit(content, isElement) {
+    const tl = document.createElement('span');
+    tl.className = 'tl';
+    const inner = document.createElement('span');
+    inner.style.animationDelay = nextDelay();
+    if (isElement) inner.appendChild(content);
+    else inner.textContent = content;
+    tl.appendChild(inner);
+    title.appendChild(tl);
+  }
+  nodes.forEach(n => {
+    if (n.nodeType === Node.TEXT_NODE) {
+      const parts = n.textContent.match(/[\u4e00-\u9fff\u3000-\u303f\uff01-\uff5e]|[^\s\u4e00-\u9fff\u3000-\u303f\uff01-\uff5e]+|\s+/g) || [];
+      parts.forEach(p => {
+        if (/^\s+$/.test(p)) title.appendChild(document.createTextNode(p));
+        else pushUnit(p, false);
+      });
+    } else if (n.nodeName === 'BR') {
+      title.appendChild(document.createElement('br'));
+    } else {
+      pushUnit(n, true);
+    }
+  });
+}
+document.querySelectorAll('.slide .title').forEach(splitTitle);
+
+/* ====== v5:动画重放(回翻时重新演) + 大数字滚动 ====== */
+const ANIM_SEL = '.eyebrow,.sub,.hairline,.card,.big-number,.big-label,.list-line,.t-item,.tbl,.step,.big-quote,.fade-word,.flow-node,.flow-connector,.fc-arrow,.rm-center,.rm-sat,.rm-line,.co-col,.co-arrow,.fill-blank,.tl>span';
+function replayAnim(slide) {
+  const els = slide.querySelectorAll(ANIM_SEL);
+  els.forEach(el => { el.style.animation = 'none'; });
+  void slide.offsetWidth;
+  els.forEach(el => { el.style.animation = ''; });
+}
+function countUp(el) {
+  const txt = el.dataset.final || el.textContent.trim();
+  el.dataset.final = txt;
+  const m = txt.match(/^(\d+)([\s\S]*)$/);
+  if (!m) return;
+  const target = parseInt(m[1], 10), suffix = m[2];
+  const dur = 900, t0 = performance.now();
+  (function tick(t) {
+    const p = Math.min((t - t0) / dur, 1);
+    const e = 1 - Math.pow(1 - p, 3);
+    el.textContent = Math.round(target * e) + suffix;
+    if (p < 1) requestAnimationFrame(tick);
+  })(t0);
+}
+
+function show(i, dir) {
   if (i < 0) i = 0;
   if (i >= total) i = total - 1;
-  slides[cur].classList.remove('active');
+  if (dir === undefined) dir = (i >= cur) ? 1 : -1;
+  const old = slides[cur];
+  const s = slides[i];
+  if (old !== s) {
+    old.classList.remove('active');
+    old.classList.add(dir > 0 ? 'exit-l' : 'exit-r');
+    old.style.zIndex = 2;
+    setTimeout(() => { old.classList.remove('exit-l', 'exit-r'); old.style.zIndex = ''; }, 620);
+  }
   cur = i;
-  slides[cur].classList.add('active');
+  replayAnim(s);
+  s.classList.remove('from-r', 'from-l');
+  s.classList.add(dir > 0 ? 'from-r' : 'from-l');
+  s.style.zIndex = 3;
+  void s.offsetWidth;
+  s.classList.add('active');
   document.getElementById('pageNum').textContent = (cur + 1) + ' / ' + total;
   document.getElementById('progress').style.width = ((cur + 1) / total * 100) + '%';
+  const dn = document.getElementById('decoNum');
+  if (dn) dn.textContent = String(cur + 1).padStart(2, '0');
+  s.querySelectorAll('.big-number').forEach(countUp);
 }
 function next() { show(cur + 1); }
 function prev() { show(cur - 1); }
@@ -1958,6 +2118,7 @@ document.addEventListener('keydown', e => {
 });
 
 document.getElementById('progress').style.width = (1 / total * 100) + '%';
+slides[0].querySelectorAll('.big-number').forEach(countUp);
 
 // 触摸滑动支持
 let touchX = 0;

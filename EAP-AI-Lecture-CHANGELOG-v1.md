@@ -1,5 +1,30 @@
 # EAP-AI 讲课交付物 更新记录
 
+## v5 · 2026-10-18
+
+调研主流开源 PPT skill(ppt-master 38k★ / frontend-slides 25k★ / guizang-ppt-skill 20.8k★ / html-ppt-skill 47 动效 / html-slides 去 AI 感)后,筛选 6 项适合"单文件离线 + 百寸电视"场景的技术落地:
+
+**根因修复:动画"完全没有"的真相**
+- 旧版所有入场动画在页面加载时 39 页一次性播完,翻页只是淡入 —— 后面每页都是静止的
+- 新增 `.slide:not(.active) * { animation-play-state: paused }` 暂停机制 + `replayAnim()` 重放,翻到哪页哪页才开演,回翻重播
+
+**新增动效**
+- **翻页转场**:方向感知滑移(下一页从右 7% 滑入、旧页反向让出 3%),z-index 分层
+- **标题逐字遮罩揭示**:JS 自动把 39 页标题分包(中文按字、英文数字按词、渐变字整体),`overflow:hidden` + `maskUp` 逐字上浮
+- **渐变字流动**:标题/金句的渐变字 `background-position` 7s 循环漂移
+- **大数字 count-up**:60%/75%/50% 从 0 滚动到终值(900ms ease-out)
+- **blur 模糊渐入**:rise/pop/slideR 三个 keyframes 加 from 状态模糊
+- **flow-chart 箭头擦除生长**(clip-path wipe)、步骤箭头脉冲、时间轴圆点呼吸、自填框斜纹流动
+- **环境光斑漂移**:仅当前页跑 26s 循环,不耗性能
+
+**去 AI 感**
+- 卡片彩虹顶条(蓝/青/橙/绿/红/紫)→ 统一收敛为单色蓝,默认隐藏,hover 才从左亮出
+- 叠加 SVG feTurbulence 噪点纹理(data-URI 离线可用),去"塑料感"
+- 右下角装饰性半透明大页码(42vh),编辑部排版感
+- 卡片圆角 18px → 12px,hover 阴影加深
+
+已浏览器实测:39 页翻页/转场/逐字/大数字/console 全部通过,无 JS 报错。
+
 ## v4 · 2026-10-18
 
 按反馈把"演讲稿"重构为"知识讲解",核心是讲清概念之间的衍生关系,并落到公司实际工具链:
