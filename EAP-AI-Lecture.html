@@ -547,6 +547,299 @@ html, body {
   * { animation: none !important; opacity: 1 !important; transform: none !important; }
 }
 
+/* ====== 衍生关系图(概念演化) ====== */
+.flow-chart {
+  display: flex;
+  align-items: stretch;
+  gap: 0;
+  margin: 48px 0;
+  flex-wrap: nowrap;
+}
+.flow-node {
+  flex: 1;
+  background: var(--paper);
+  border: 2px solid var(--line);
+  border-radius: 16px;
+  padding: 28px 22px;
+  text-align: center;
+  position: relative;
+  opacity: 0;
+  transform: translateY(30px) scale(0.95);
+  animation: pop 0.7s cubic-bezier(.2,.6,.2,1) forwards;
+  min-width: 0;
+}
+.flow-node.is-hot {
+  border-color: var(--acc);
+  background: linear-gradient(180deg, rgba(37,99,235,0.04), var(--paper) 60%);
+  box-shadow: 0 8px 24px rgba(37,99,235,0.12);
+}
+.flow-node .fn-tag {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: var(--acc);
+  background: rgba(37,99,235,0.08);
+  padding: 4px 12px;
+  border-radius: 999px;
+  margin-bottom: 12px;
+}
+.flow-node h3 {
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--ink);
+  margin-bottom: 8px;
+}
+.flow-node .fn-en {
+  font-size: 13px;
+  color: var(--ink-3);
+  letter-spacing: 1px;
+  margin-bottom: 12px;
+  font-family: "SF Mono", Consolas, monospace;
+}
+.flow-node p {
+  font-size: 15px;
+  color: var(--ink-2);
+  line-height: 1.55;
+}
+.flow-connector {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0 8px;
+  flex-shrink: 0;
+  opacity: 0;
+  animation: rise 0.5s cubic-bezier(.2,.6,.2,1) forwards;
+}
+.flow-connector .fc-arrow {
+  font-size: 32px;
+  color: var(--acc);
+  font-weight: 700;
+  line-height: 1;
+}
+.flow-connector .fc-label {
+  font-size: 12px;
+  color: var(--ink-3);
+  margin-top: 6px;
+  writing-mode: horizontal-tb;
+  white-space: nowrap;
+  font-weight: 600;
+}
+.flow-chart .flow-node:nth-child(1) { animation-delay: 0.7s; }
+.flow-chart .flow-connector:nth-child(2) { animation-delay: 0.95s; }
+.flow-chart .flow-node:nth-child(3) { animation-delay: 1.2s; }
+.flow-chart .flow-connector:nth-child(4) { animation-delay: 1.45s; }
+.flow-chart .flow-node:nth-child(5) { animation-delay: 1.7s; }
+.flow-chart .flow-connector:nth-child(6) { animation-delay: 1.95s; }
+.flow-chart .flow-node:nth-child(7) { animation-delay: 2.2s; }
+.flow-chart .flow-connector:nth-child(8) { animation-delay: 2.45s; }
+.flow-chart .flow-node:nth-child(9) { animation-delay: 2.7s; }
+
+/* ====== 中心辐射关系图 ====== */
+.relation-map {
+  position: relative;
+  width: 100%;
+  max-width: 1200px;
+  height: 560px;
+  margin: 32px auto;
+}
+.rm-center {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 240px;
+  height: 240px;
+  border-radius: 50%;
+  background: var(--grad-blue);
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 20px 48px rgba(37,99,235,0.28);
+  z-index: 2;
+  opacity: 0;
+  animation: pop 0.8s 0.5s cubic-bezier(.2,.8,.3,1.2) forwards;
+}
+.rm-center h3 { font-size: 28px; font-weight: 800; margin-bottom: 6px; }
+.rm-center p { font-size: 14px; opacity: 0.9; }
+.rm-sat {
+  position: absolute;
+  width: 220px;
+  background: var(--paper);
+  border: 2px solid var(--line);
+  border-radius: 14px;
+  padding: 18px 16px;
+  text-align: center;
+  box-shadow: var(--shadow-sm);
+  opacity: 0;
+  transform: scale(0.6);
+  animation: pop 0.7s cubic-bezier(.2,.8,.3,1.2) forwards;
+  z-index: 2;
+}
+.rm-sat .tag {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  color: var(--acc);
+  background: rgba(37,99,235,0.08);
+  padding: 3px 10px;
+  border-radius: 999px;
+  margin-bottom: 8px;
+}
+.rm-sat h4 { font-size: 17px; font-weight: 700; color: var(--ink); margin-bottom: 6px; }
+.rm-sat p { font-size: 13px; color: var(--ink-2); line-height: 1.5; }
+.rm-sat.pos-tl { top: 0; left: 8%; animation-delay: 0.9s; }
+.rm-sat.pos-tr { top: 0; right: 8%; animation-delay: 1.1s; }
+.rm-sat.pos-bl { bottom: 0; left: 8%; animation-delay: 1.3s; }
+.rm-sat.pos-br { bottom: 0; right: 8%; animation-delay: 1.5s; }
+.rm-sat.pos-t { top: -20px; left: 50%; transform: translateX(-50%) scale(0.6); animation-delay: 0.8s; }
+.rm-sat.pos-b { bottom: -20px; left: 50%; transform: translateX(-50%) scale(0.6); animation-delay: 1.6s; }
+.rm-line {
+  position: absolute;
+  background: linear-gradient(90deg, var(--acc) 0%, transparent 100%);
+  height: 2px;
+  transform-origin: left center;
+  opacity: 0;
+  animation: lineGrow 0.6s cubic-bezier(.2,.6,.2,1) forwards;
+  z-index: 1;
+}
+@keyframes lineGrow { to { opacity: 0.4; } }
+.rm-line.l-tl { top: 28%; left: 30%; width: 220px; transform: rotate(-25deg); animation-delay: 1s; }
+.rm-line.l-tr { top: 28%; left: 58%; width: 220px; transform: rotate(25deg); animation-delay: 1.2s; }
+.rm-line.l-bl { bottom: 28%; left: 30%; width: 220px; transform: rotate(25deg); animation-delay: 1.4s; }
+.rm-line.l-br { bottom: 28%; left: 58%; width: 220px; transform: rotate(-25deg); animation-delay: 1.6s; }
+
+/* ====== 协同数据流(左中右) ====== */
+.co-flow {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr auto 1fr;
+  gap: 16px;
+  align-items: stretch;
+  margin: 40px 0;
+}
+.co-col {
+  background: var(--paper);
+  border: 2px solid var(--line);
+  border-radius: 16px;
+  padding: 24px 20px;
+  opacity: 0;
+  transform: translateY(30px);
+  animation: rise 0.7s cubic-bezier(.2,.6,.2,1) forwards;
+}
+.co-col h4 {
+  font-size: 19px;
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 12px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid var(--acc);
+}
+.co-col.c-cyan h4 { border-color: var(--acc-2); }
+.co-col.c-orange h4 { border-color: var(--acc-3); }
+.co-col ul { list-style: none; }
+.co-col li {
+  font-size: 15px;
+  color: var(--ink-2);
+  padding: 8px 0;
+  border-bottom: 1px dashed var(--line);
+  line-height: 1.5;
+}
+.co-col li:last-child { border-bottom: none; }
+.co-col li strong { color: var(--ink); font-weight: 700; }
+.co-arrow {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: var(--acc);
+  font-size: 28px;
+  font-weight: 700;
+  opacity: 0;
+  animation: rise 0.6s forwards;
+}
+.co-arrow .co-label {
+  font-size: 12px;
+  color: var(--ink-3);
+  margin-top: 4px;
+  font-weight: 600;
+  text-align: center;
+}
+.co-flow .co-col:nth-child(1) { animation-delay: 0.8s; }
+.co-flow .co-arrow:nth-child(2) { animation-delay: 1.05s; }
+.co-flow .co-col:nth-child(3) { animation-delay: 1.3s; }
+.co-flow .co-arrow:nth-child(4) { animation-delay: 1.55s; }
+.co-flow .co-col:nth-child(5) { animation-delay: 1.8s; }
+
+/* ====== 自填占位框 ====== */
+.fill-blank {
+  background: repeating-linear-gradient(
+    -45deg,
+    var(--bg-soft),
+    var(--bg-soft) 12px,
+    rgba(37,99,235,0.03) 12px,
+    rgba(37,99,235,0.03) 24px
+  );
+  border: 2px dashed var(--acc);
+  border-radius: 16px;
+  padding: 40px 32px;
+  margin: 32px 0;
+  opacity: 0;
+  transform: translateY(20px);
+  animation: rise 0.7s 0.8s forwards;
+}
+.fill-blank .fb-tag {
+  display: inline-block;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: var(--acc);
+  background: var(--paper);
+  padding: 6px 16px;
+  border-radius: 999px;
+  margin-bottom: 16px;
+  border: 1px solid var(--acc);
+}
+.fill-blank h3 {
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 12px;
+}
+.fill-blank .fb-hint {
+  font-size: 16px;
+  color: var(--ink-2);
+  line-height: 1.7;
+  margin-bottom: 20px;
+}
+.fill-blank .fb-hint strong { color: var(--acc); }
+.fb-fields {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+.fb-field {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 14px 16px;
+}
+.fb-field .fb-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--acc);
+  letter-spacing: 1px;
+  margin-bottom: 6px;
+}
+.fb-field .fb-line {
+  font-size: 14px;
+  color: var(--ink-3);
+  font-style: italic;
+}
+
 /* ====== 响应式 ====== */
 @media (max-width: 900px) {
   .cols-2, .cols-3, .cols-4 { grid-template-columns: 1fr; }
@@ -575,9 +868,9 @@ html, body {
     <p style="font-size: 14px; color: var(--ink-3); margin-top: 8px;">
       <span class="fade-word">60 分钟</span>
       <span class="fade-word">·</span>
-      <span class="fade-word">30 页</span>
+      <span class="fade-word">39 页</span>
       <span class="fade-word">·</span>
-      <span class="fade-word">7 个故事</span>
+      <span class="fade-word">6 个章节</span>
     </p>
   </div>
 </section>
@@ -636,45 +929,76 @@ html, body {
   </div>
 </section>
 
-<!-- ========== 04 今天讲什么 ========== -->
+<!-- ========== 04 路线图 ========== -->
 <section class="slide">
   <div class="slide-inner">
-    <div class="eyebrow">今天讲什么</div>
-    <h2 class="title">三个 <span class="em">故事</span>,一条主线</h2>
+    <div class="eyebrow">今天的路线</div>
+    <h2 class="title">从 <span class="em">概念</span> 到 <span class="em3">落地</span>,<br>一步一步走</h2>
     <div class="list-line">
       <div class="num">1</div>
       <div>
-        <h4>我用 AI 的真实场景</h4>
-        <p>不是网上那种"AI 取代程序员"的故事,是 fab 里实实在在发生的事</p>
+        <h4>AI 是什么 · 大词扫盲</h4>
+        <p>ChatGPT / LLM / Agent / Skill / MCP / Dify / N8N … 先把这些词摊开来,讲清楚每个是什么</p>
       </div>
     </div>
     <div class="list-line">
       <div class="num">2</div>
       <div>
-        <h4>三套工具怎么配合</h4>
-        <p>Copilot 是主力,DSH 处理长文档,Codex 跑离线脚本,各有分工</p>
+        <h4>概念怎么一层层长出来</h4>
+        <p>从 LLM 开始,为什么是 Agent?为什么要拆 Sub-Agent?Skill 和 MCP 解决什么问题?</p>
       </div>
     </div>
     <div class="list-line">
       <div class="num">3</div>
       <div>
-        <h4>下一步能做什么</h4>
-        <p>把个人经验变成团队资产,让新人少踩我踩过的坑</p>
+        <h4>三套工具 + Dify / N8N 怎么协同</h4>
+        <p>Copilot / DSH / Codex 各干什么?能不能互通?公司里的 Dify、N8N 又怎么接进来?</p>
+      </div>
+    </div>
+    <div class="list-line">
+      <div class="num">4</div>
+      <div>
+        <h4>落到 EAP 工作 + 留给你填的空白</h4>
+        <p>每个模块怎么走流程,我给你框架和步骤,案例你自己补进去</p>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ========== PART 02 ========== -->
+<!-- ========== PART 02 过渡页 ========== -->
 <section class="slide center-stage">
   <div class="slide-inner">
     <div class="eyebrow">PART 02</div>
-    <h1 class="title">AI 这一年<br><span class="em">发生了什么</span></h1>
-    <p class="sub">先花 5 分钟,把大家都听过的那些 AI 名词,捋一遍</p>
+    <h1 class="title">AI 是什么<br><span class="em">大词扫盲</span></h1>
+    <p class="sub">市场上那么多词,先摊开,一个一个讲清楚</p>
   </div>
 </section>
 
-<!-- ========== 06 时间轴 ========== -->
+<!-- ========== 大词扫盲 ========== -->
+<section class="slide">
+  <div class="slide-inner">
+    <div class="eyebrow">先听懂这些词</div>
+    <h2 class="title">你可能听过,但 <span class="em">分不清</span></h2>
+    <table class="tbl">
+      <thead>
+        <tr><th>词</th><th>一句话解释</th><th>fab 类比</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>ChatGPT</strong></td><td>OpenAI 做的聊天产品,背后是大模型</td><td>像 ECS 的人机界面</td></tr>
+        <tr><td><strong>LLM</strong></td><td>大语言模型,AI 的"大脑"</td><td>像机台的 PLC,是核心</td></tr>
+        <tr><td><strong>Prompt</strong></td><td>你发给 AI 的那段话</td><td>像写给机台的 recipe</td></tr>
+        <tr><td><strong>Token</strong></td><td>AI 读/写文字的最小单位,约 0.5 个汉字</td><td>像 SECS 消息里的字节</td></tr>
+        <tr><td><strong>Agent</strong></td><td>能调用工具、自己跑流程的 AI</td><td>像一个会自己开 recipe 的操作员</td></tr>
+        <tr><td><strong>Skill</strong></td><td>给 Agent 准备好的"固定套路"</td><td>像机台预设的程序</td></tr>
+        <tr><td><strong>MCP</strong></td><td>让 AI 连外部工具的标准协议</td><td>像 SECS/GEM 协议</td></tr>
+        <tr><td><strong>Dify / N8N</strong></td><td>低代码 AI 工作流平台</td><td>像 MES 的流程编辑器</td></tr>
+      </tbody>
+    </table>
+    <p class="sub" style="margin-top: 24px;">先有个印象,下面一层一层剥开</p>
+  </div>
+</section>
+
+<!-- ========== AI 时间轴 ========== -->
 <section class="slide">
   <div class="slide-inner">
     <div class="eyebrow">2022 — 2026</div>
@@ -683,101 +1007,389 @@ html, body {
       <div class="t-item">
         <div class="t-year">2022.11</div>
         <h4>ChatGPT 发布</h4>
-        <p>大家第一次发现,AI 能听懂人话,但只能聊天,不能动手</p>
+        <p>AI 能听懂人话,但只能聊天,不能动手</p>
       </div>
       <div class="t-item">
         <div class="t-year">2023.06</div>
-        <h4>GitHub Copilot 普及</h4>
-        <p>写代码从"AI 给建议"变成"AI 直接补全",工程师开始离不开</p>
+        <h4>Copilot 普及</h4>
+        <p>写代码从"AI 给建议"变成"AI 直接补全"</p>
       </div>
       <div class="t-item">
         <div class="t-year">2024.04</div>
         <h4>Agent / Skill 概念火起来</h4>
-        <p>AI 从"补全代码"升级到"能调用工具、能跑流程",开始像助手</p>
+        <p>AI 开始能调用工具、跑流程,像助手</p>
       </div>
       <div class="t-item">
         <div class="t-year">2025.02</div>
         <h4>DeepSeek / 国产模型崛起</h4>
-        <p>不用翻墙也能用上顶级模型,fab 内网部署成为可能</p>
+        <p>不用翻墙也能用顶级模型,fab 内网部署成为可能</p>
       </div>
       <div class="t-item">
         <div class="t-year">2026 现在</div>
         <h4>AI 开始懂业务</h4>
-        <p>不只是写代码,还能读懂 SECS 协议、看懂机台 log、写工艺文档</p>
+        <p>能读懂 SECS 协议、看懂机台 log、写工艺文档</p>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ========== 07 关键变化 ========== -->
+<!-- ========== LLM 是什么 ========== -->
 <section class="slide">
   <div class="slide-inner">
-    <div class="eyebrow">关键变化</div>
-    <h2 class="title">AI 的角色,从 <span class="em">工具</span> 变成 <span class="em">同事</span></h2>
-    <table class="tbl">
-      <thead>
-        <tr><th>阶段</th><th>AI 做什么</th><th>你怎么用</th><th>典型场景</th></tr>
-      </thead>
-      <tbody>
-        <tr><td>2022-2023</td><td>给建议</td><td>复制粘贴</td><td>问"VB 怎么连数据库"</td></tr>
-        <tr><td>2023-2024</td><td>补全代码</td><td>IDE 里 Tab 接受</td><td>Copilot 补全 drv 函数</td></tr>
-        <tr><td>2024-2025</td><td>读文档 + 写代码</td><td>给 AI 看 log 和 spec</td><td>让 AI 分析 SECS 消息格式</td></tr>
-        <tr><td>2025-2026</td><td>跑流程</td><td>定义任务,AI 自动执行</td><td>Skill 一键生成测试报告</td></tr>
-      </tbody>
-    </table>
-  </div>
-</section>
-
-<!-- ========== 08 未来 1-2 年 ========== -->
-<section class="slide">
-  <div class="slide-inner">
-    <div class="eyebrow">未来 1-2 年</div>
-    <h2 class="title">三件事,大概率 <span class="em">会发生</span></h2>
-    <div class="card-row cols-3">
+    <div class="eyebrow">LLM · 大语言模型</div>
+    <h2 class="title">AI 的 <span class="em">大脑</span>,<br>但只是一个大脑</h2>
+    <div class="big-quote">
+      LLM = 一个 <em>读过互联网上所有文字</em> 的大脑,<br>
+      你给它一段话,它预测下一句最可能是什么。
+    </div>
+    <div class="card-row cols-3" style="margin-top: 40px;">
       <div class="card">
-        <div class="tag">趋势 1</div>
-        <h3>AI 直接读机台数据</h3>
-        <p>不只是看 log,而是直接连 SECS/GEM 接口,实时分析 alarm 趋势</p>
+        <div class="tag">它能做</div>
+        <h3>理解 + 生成</h3>
+        <p>读你的话、懂你的意思、写出像人话的回复</p>
       </div>
       <div class="card c-cyan">
-        <div class="tag">趋势 2</div>
-        <h3>Skill 变成团队资产</h3>
-        <p>每个人写的 Skill 可以共享,新人入职第一天就有"老师傅"陪着</p>
+        <div class="tag">它学过</div>
+        <h3>互联网所有公开文字</h3>
+        <p>书、文档、代码、论坛、论文,几千亿字</p>
       </div>
       <div class="card c-orange">
-        <div class="tag">趋势 3</div>
-        <h3>跨区协作靠 AI 打通</h3>
-        <p>蚀刻、薄膜、黄光、CMP 的 log 和文档,AI 统一理解,不用来回拉会</p>
+        <div class="tag">它怎么工作</div>
+        <h3>预测下一个词</h3>
+        <p>不是真的"理解",是统计学上最可能的延续</p>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ========== 09 怎么跟得上 ========== -->
+<!-- ========== LLM 不能干什么 ========== -->
 <section class="slide">
   <div class="slide-inner">
-    <div class="eyebrow">怎么跟得上</div>
-    <h2 class="title">不用 <span class="em">追</span>,只要 <span class="em">用</span></h2>
-    <div class="big-quote">
-      不要试图搞懂所有 AI 新闻,<br>
-      只要把你 <em>手头的工作</em> 用 AI 重做一遍,<br>
-      你就已经领先 80% 的人。
+    <div class="eyebrow">LLM 的边界</div>
+    <h2 class="title">LLM <span class="em">不能</span> 干什么</h2>
+    <div class="card-row cols-2">
+      <div class="card c-red">
+        <div class="tag">不能 1</div>
+        <h3>不能动手</h3>
+        <p>你说"帮我查 ETCH-01 昨天的 alarm",它只能说"你应该去 ECS 查",不能真的去点鼠标</p>
+      </div>
+      <div class="card c-red">
+        <div class="tag">不能 2</div>
+        <h3>不能查实时数据</h3>
+        <p>它不知道现在是几点、机台现在的状态、你电脑上有什么文件</p>
+      </div>
+      <div class="card c-red">
+        <div class="tag">不能 3</div>
+        <h3>不能连你的工具</h3>
+        <p>它不能直接打开 VS Code、不能直接连 MES 数据库、不能直接发邮件</p>
+      </div>
+      <div class="card c-red">
+        <div class="tag">不能 4</div>
+        <h3>不能记你一辈子</h3>
+        <p>每次对话结束,它就忘了你是谁、你上次问过什么(除非有特殊机制)</p>
+      </div>
     </div>
-    <div class="hairline"></div>
-    <p class="sub">我自己就是这么过来的:从让 AI 帮我写一行 VB 开始,到现在让它帮我读整个 SECS 文档</p>
+    <p class="sub" style="margin-top: 32px;"><strong style="color: var(--acc);">这就是为什么要 Agent</strong> —— 给 LLM 装上"手"和"脚"</p>
   </div>
 </section>
 
-<!-- ========== PART 03 ========== -->
+<!-- ========== PART 03 概念衍生 ========== -->
 <section class="slide center-stage">
   <div class="slide-inner">
-    <div class="eyebrow">PART 03</div>
-    <h1 class="title">三套 <span class="em">工具</span><br>各管一段</h1>
-    <p class="sub">公司给的三把刀,我用了一年,摸出了分工</p>
+    <div class="eyebrow">PART 03 · 概念衍生</div>
+    <h1 class="title">从一个 <span class="em">大脑</span>,<br>长出 <span class="em2">一支团队</span></h1>
+    <p class="sub">LLM 怎么一步一步变成 Agent、Skill、MCP —— 看清这条演化线,你就不会再被名词绕晕</p>
   </div>
 </section>
 
-<!-- ========== 11 三件套 ========== -->
+<!-- ========== 衍生总览 flow-chart ========== -->
+<section class="slide">
+  <div class="slide-inner">
+    <div class="eyebrow">衍生总览</div>
+    <h2 class="title">五个词,<span class="em">一条线</span></h2>
+    <div class="flow-chart">
+      <div class="flow-node is-hot">
+        <div class="fn-tag">起点</div>
+        <h3>LLM</h3>
+        <div class="fn-en">大语言模型</div>
+        <p>只会"说",不会"做"的大脑</p>
+      </div>
+      <div class="flow-connector">
+        <div class="fc-arrow">→</div>
+        <div class="fc-label">装上手脚</div>
+      </div>
+      <div class="flow-node">
+        <div class="fn-tag">第一层</div>
+        <h3>Agent</h3>
+        <div class="fn-en">智能体</div>
+        <p>能调用工具、自主完成任务的 LLM</p>
+      </div>
+      <div class="flow-connector">
+        <div class="fc-arrow">→</div>
+        <div class="fc-label">任务拆分</div>
+      </div>
+      <div class="flow-node">
+        <div class="fn-tag">第二层</div>
+        <h3>Sub-Agent</h3>
+        <div class="fn-en">子智能体</div>
+        <p>大任务拆小,并行干活的小组长</p>
+      </div>
+      <div class="flow-connector">
+        <div class="fc-arrow">→</div>
+        <div class="fc-label">经验固化</div>
+      </div>
+      <div class="flow-node">
+        <div class="fn-tag">第三层</div>
+        <h3>Skill</h3>
+        <div class="fn-en">技能</div>
+        <p>把重复套路写成模板,一键复用</p>
+      </div>
+      <div class="flow-connector">
+        <div class="fc-arrow">→</div>
+        <div class="fc-label">连接标准</div>
+      </div>
+      <div class="flow-node">
+        <div class="fn-tag">第四层</div>
+        <h3>MCP</h3>
+        <div class="fn-en">模型上下文协议</div>
+        <p>让 AI 连文件、数据库、API 的统一接口</p>
+      </div>
+    </div>
+    <p class="sub" style="margin-top: 24px;">记住这条线:<strong style="color: var(--acc);">后面的每一个词,都是为了补前一个词的短板</strong></p>
+  </div>
+</section>
+
+<!-- ========== 17 Agent ========== -->
+<section class="slide">
+  <div class="slide-inner">
+    <div class="eyebrow">第一层 · Agent</div>
+    <h2 class="title">给 LLM 装上 <span class="em">手</span> 和 <span class="em">脚</span></h2>
+    <div class="big-quote">
+      Agent = LLM + <em>工具</em> + <em>自主决策</em>,<br>
+      你说"做什么",它自己想"怎么做"。
+    </div>
+    <div class="card-row cols-3" style="margin-top: 32px;">
+      <div class="card">
+        <div class="tag">fab 类比</div>
+        <h3>像一个有经验的作业员</h3>
+        <p>你只说"跑这批货",他自己知道选 recipe、上料、按 start,不用你一步步教</p>
+      </div>
+      <div class="card c-cyan">
+        <div class="tag">它能调用</div>
+        <h3>工具 (Tools)</h3>
+        <p>读文件、跑脚本、查数据库、发请求 —— 这些"手"都是外挂给它的</p>
+      </div>
+      <div class="card c-orange">
+        <div class="tag">关键点</div>
+        <h3>自主决策</h3>
+        <p>遇到异常会自己判断:重试、换方案、或者停下来问你</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== 18 Sub-Agent ========== -->
+<section class="slide">
+  <div class="slide-inner">
+    <div class="eyebrow">第二层 · Sub-Agent</div>
+    <h2 class="title">活太多,<span class="em">分包</span> 给小弟</h2>
+    <div class="big-quote">
+      主 Agent 当 <em>项目经理</em>,<br>
+      把大任务拆给多个 Sub-Agent <em>并行干</em>,最后汇总。
+    </div>
+    <div class="steps" style="margin-top: 32px;">
+      <div class="step">
+        <div class="step-num">主 Agent</div>
+        <h4>接单</h4>
+        <p>"分析 ETCH 区三个月 alarm"</p>
+      </div>
+      <div class="step-arrow">→</div>
+      <div class="step">
+        <div class="step-num">Sub A</div>
+        <h4>拉 log</h4>
+        <p>连 ECS 取数据</p>
+      </div>
+      <div class="step-arrow">→</div>
+      <div class="step">
+        <div class="step-num">Sub B</div>
+        <h4>解析</h4>
+        <p>提取 alarm code</p>
+      </div>
+      <div class="step-arrow">→</div>
+      <div class="step">
+        <div class="step-num">Sub C</div>
+        <h4>汇总</h4>
+        <p>生成趋势图</p>
+      </div>
+    </div>
+    <p class="sub" style="margin-top: 24px;">fab 类比:就像跨区 issue,你拉蚀刻、薄膜、黄光三个人分头查,最后你汇总结论</p>
+  </div>
+</section>
+
+<!-- ========== 19 Skill ========== -->
+<section class="slide">
+  <div class="slide-inner">
+    <div class="eyebrow">第三层 · Skill</div>
+    <h2 class="title">把 <span class="em">经验</span> 写成 <span class="em">SOP</span></h2>
+    <div class="big-quote">
+      Skill = 你教 AI 的 <em>固定套路</em>,<br>
+      同类问题下次一键调用,不用重复教。
+    </div>
+    <div class="card-row cols-2" style="margin-top: 32px;">
+      <div class="card">
+        <div class="tag">fab 类比</div>
+        <h3>就是一份 SOP / 作业指导书</h3>
+        <p>新人照 SOP 就能上手,Skill 就是写给 AI 看的 SOP —— 输入什么、走哪几步、输出什么格式</p>
+      </div>
+      <div class="card c-cyan">
+        <div class="tag">我的例子</div>
+        <h3>drv 测试文档 Skill</h3>
+        <p>输入:drv 版本号 + 测试项 → 输出:标准测试报告,含 SECS 消息流,已复用 20+ 次</p>
+      </div>
+    </div>
+    <p class="sub" style="margin-top: 24px;">判断标准:一件事你重复做了 <strong style="color: var(--acc);">3 次以上</strong>,就值得写成 Skill</p>
+  </div>
+</section>
+
+<!-- ========== 20 MCP ========== -->
+<section class="slide">
+  <div class="slide-inner">
+    <div class="eyebrow">第四层 · MCP</div>
+    <h2 class="title">AI 世界的 <span class="em">SECS/GEM</span></h2>
+    <div class="big-quote">
+      MCP = AI 连接外部世界的 <em>标准协议</em>,<br>
+      就像 SECS/GEM 让任何 host 都能连任何机台。
+    </div>
+    <div class="card-row cols-3" style="margin-top: 32px;">
+      <div class="card">
+        <div class="tag">没有 MCP 之前</div>
+        <h3>各家各写各的接口</h3>
+        <p>每个 AI 工具想读文件、查数据库,都要单独开发,互不通用</p>
+      </div>
+      <div class="card c-cyan">
+        <div class="tag">有了 MCP 之后</div>
+        <h3>一次开发,到处能用</h3>
+        <p>MCP Server 写好,任何支持 MCP 的 AI 都能直接连</p>
+      </div>
+      <div class="card c-orange">
+        <div class="tag">对 fab 的意义</div>
+        <h3>AI 可以直连 MES / RCMS</h3>
+        <p>不用再复制粘贴 log,AI 通过 MCP 直接读数据</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== 21 Team Loop ========== -->
+<section class="slide">
+  <div class="slide-inner">
+    <div class="eyebrow">补充概念 · Team Loop</div>
+    <h2 class="title">AI 的 <span class="em">PDCA</span> 循环</h2>
+    <div class="big-quote">
+      Agent 干活不是一把过,<br>
+      而是 <em>Plan → Do → Check → Act</em>,错了自己纠。
+    </div>
+    <div class="steps" style="margin-top: 32px;">
+      <div class="step">
+        <div class="step-num">PLAN</div>
+        <h4>定计划</h4>
+        <p>分析任务,拆解步骤</p>
+      </div>
+      <div class="step-arrow">→</div>
+      <div class="step">
+        <div class="step-num">DO</div>
+        <h4>执行</h4>
+        <p>调用工具,跑流程</p>
+      </div>
+      <div class="step-arrow">→</div>
+      <div class="step">
+        <div class="step-num">CHECK</div>
+        <h4>验证</h4>
+        <p>结果对不对?编译过吗?</p>
+      </div>
+      <div class="step-arrow">→</div>
+      <div class="step">
+        <div class="step-num">ACT</div>
+        <h4>修正</h4>
+        <p>不对就改,再来一轮</p>
+      </div>
+    </div>
+    <p class="sub" style="margin-top: 24px;">这就是为什么 Agent 写代码会自己跑测试、看报错、再改 —— 它在循环,不是一次性输出</p>
+  </div>
+</section>
+
+<!-- ========== 22 Static / Sub-static ========== -->
+<section class="slide">
+  <div class="slide-inner">
+    <div class="eyebrow">补充概念 · 记忆机制</div>
+    <h2 class="title">AI 的 <span class="em">长期记忆</span> 和 <span class="em2">临时笔记</span></h2>
+    <div class="card-row cols-2">
+      <div class="card">
+        <div class="tag">Static · 长期记忆</div>
+        <h3>跨会话都记得</h3>
+        <p>你的代码风格、fab 命名规范、常用 SECS 消息格式 —— 写成规则文件,每次对话自动带上</p>
+        <div class="meta">类比:老师傅的肌肉记忆</div>
+      </div>
+      <div class="card c-cyan">
+        <div class="tag">Sub-static · 会话内记忆</div>
+        <h3>只记这一次</h3>
+        <p>今天查的 alarm、正在改的 drv 版本、刚读的 spec 章节 —— 对话结束就清空</p>
+        <div class="meta">类比:便利贴,用完就撕</div>
+      </div>
+    </div>
+    <p class="sub" style="margin-top: 24px;">实操:把"fab 通用规则"写进 Static(如 Copilot 的 rules 文件),AI 会越来越懂你</p>
+  </div>
+</section>
+
+<!-- ========== 概念关联 relation-map ========== -->
+<section class="slide">
+  <div class="slide-inner">
+    <div class="eyebrow">串起来看</div>
+    <h2 class="title">所有概念,围着 <span class="em">一个中心</span> 转</h2>
+    <div class="relation-map">
+      <div class="rm-line l-tl"></div>
+      <div class="rm-line l-tr"></div>
+      <div class="rm-line l-bl"></div>
+      <div class="rm-line l-br"></div>
+      <div class="rm-center">
+        <h3>LLM</h3>
+        <p>一切的大脑</p>
+      </div>
+      <div class="rm-sat pos-tl">
+        <div class="tag">手脚</div>
+        <h4>Agent</h4>
+        <p>让大脑能动手做事</p>
+      </div>
+      <div class="rm-sat pos-tr">
+        <div class="tag">分身</div>
+        <h4>Sub-Agent</h4>
+        <p>让一个 Agent 变一支团队</p>
+      </div>
+      <div class="rm-sat pos-bl">
+        <div class="tag">经验</div>
+        <h4>Skill</h4>
+        <p>让团队干活有 SOP 可依</p>
+      </div>
+      <div class="rm-sat pos-br">
+        <div class="tag">接口</div>
+        <h4>MCP</h4>
+        <p>让团队连得上 fab 的系统</p>
+      </div>
+    </div>
+    <p class="sub" style="text-align: center;">四个概念都是 <strong style="color: var(--acc);">给 LLM 补短板</strong>:补动手、补并行、补经验、补连接</p>
+  </div>
+</section>
+
+<!-- ========== PART 04 工具协同 ========== -->
+<section class="slide center-stage">
+  <div class="slide-inner">
+    <div class="eyebrow">PART 04 · 工具协同</div>
+    <h1 class="title">三把刀 + <span class="em">两座平台</span>,<br>怎么<span class="em2">配合</span>着用</h1>
+    <p class="sub">Copilot / DSH / Codex 分工,Dify / N8N 串联 —— 概念落地到工具这一层</p>
+  </div>
+</section>
+
+<!-- ========== 三件套定位 ========== -->
 <section class="slide">
   <div class="slide-inner">
     <div class="eyebrow">三件套</div>
@@ -805,10 +1417,10 @@ html, body {
   </div>
 </section>
 
-<!-- ========== 12 为什么 Copilot 是主力 ========== -->
+<!-- ========== Copilot 主力 ========== -->
 <section class="slide">
   <div class="slide-inner">
-    <div class="eyebrow">为什么是 Copilot</div>
+    <div class="eyebrow">主力 · Copilot</div>
     <h2 class="title">因为它 <span class="em">长在</span> 我工作的地方</h2>
     <div class="card-row cols-2">
       <div class="card">
@@ -828,10 +1440,10 @@ html, body {
   </div>
 </section>
 
-<!-- ========== 13 DSH 处理长文档 ========== -->
+<!-- ========== DSH 长文档 ========== -->
 <section class="slide">
   <div class="slide-inner">
-    <div class="eyebrow">DSH 的不可替代</div>
+    <div class="eyebrow">副手 · DSH</div>
     <h2 class="title">200 页 SECS spec,<span class="em">10 分钟</span> 读完</h2>
     <div class="steps">
       <div class="step">
@@ -862,10 +1474,10 @@ html, body {
   </div>
 </section>
 
-<!-- ========== 14 Codex 的离线价值 ========== -->
+<!-- ========== Codex 离线 ========== -->
 <section class="slide">
   <div class="slide-inner">
-    <div class="eyebrow">Codex 的离线场景</div>
+    <div class="eyebrow">特种兵 · Codex</div>
     <h2 class="title">内网 <span class="em">断网</span> 也能跑</h2>
     <div class="card-row cols-2">
       <div class="card c-orange">
@@ -883,7 +1495,7 @@ html, body {
   </div>
 </section>
 
-<!-- ========== 15 工具对比 ========== -->
+<!-- ========== 工具对比表 ========== -->
 <section class="slide">
   <div class="slide-inner">
     <div class="eyebrow">横向对比</div>
@@ -904,289 +1516,105 @@ html, body {
   </div>
 </section>
 
-<!-- ========== PART 04 ========== -->
-<section class="slide center-stage">
-  <div class="slide-inner">
-    <div class="eyebrow">PART 04</div>
-    <h1 class="title">几个 <span class="em">概念</span><br>听起来玄,其实简单</h1>
-    <p class="sub">Agent、Skill、MCP,这些词网上很多,我用 fab 的话给你翻译</p>
-  </div>
-</section>
-
-<!-- ========== 17 Agent ========== -->
+<!-- ========== 互通性:训练能否迁移 ========== -->
 <section class="slide">
   <div class="slide-inner">
-    <div class="eyebrow">Agent</div>
-    <h2 class="title">就是 <span class="em">帮你干活的人</span></h2>
-    <div class="big-quote">
-      Agent = 一个能 <em>自己想办法</em> 完成任务的助手,<br>
-      你只需要说"做什么",不用教"怎么做"。
-    </div>
-    <div class="card-row cols-3" style="margin-top: 32px;">
-      <div class="card">
-        <div class="tag">例子 1</div>
-        <h3>查 alarm</h3>
-        <p>你说"查一下昨天 ETCH-01 的 alarm",Agent 自己去连 log、解析、汇总</p>
-      </div>
-      <div class="card c-cyan">
-        <div class="tag">例子 2</div>
-        <h3>写报告</h3>
-        <p>你说"生成这周 SPC 异常报告",Agent 去取数、画图、写结论</p>
-      </div>
-      <div class="card c-orange">
-        <div class="tag">例子 3</div>
-        <h3>改 drv</h3>
-        <p>你说"把 S1F1 的 timeout 改成 5 秒",Agent 定位代码、修改、测试</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ========== 18 Sub-Agent ========== -->
-<section class="slide">
-  <div class="slide-inner">
-    <div class="eyebrow">Sub-Agent</div>
-    <h2 class="title">大 Agent 手下的 <span class="em">小组长</span></h2>
-    <div class="big-quote">
-      复杂任务拆给多个 Sub-Agent 并行做,<br>
-      最后由主 Agent 汇总,像 <em>项目经理带团队</em>。
-    </div>
-    <div class="steps" style="margin-top: 32px;">
-      <div class="step">
-        <div class="step-num">主 Agent</div>
-        <h4>接收任务</h4>
-        <p>"分析 ETCH 区三个月 alarm"</p>
-      </div>
-      <div class="step-arrow">→</div>
-      <div class="step">
-        <div class="step-num">Sub A</div>
-        <h4>拉 log</h4>
-        <p>连 ECS 取数据</p>
-      </div>
-      <div class="step-arrow">→</div>
-      <div class="step">
-        <div class="step-num">Sub B</div>
-        <h4>解析</h4>
-        <p>提取 alarm code</p>
-      </div>
-      <div class="step-arrow">→</div>
-      <div class="step">
-        <div class="step-num">Sub C</div>
-        <h4>汇总</h4>
-        <p>生成趋势图</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ========== 19 Skill ========== -->
-<section class="slide">
-  <div class="slide-inner">
-    <div class="eyebrow">Skill</div>
-    <h2 class="title">把 <span class="em">经验</span> 变成 <span class="em">模板</span></h2>
-    <div class="big-quote">
-      Skill = 你教 AI 的 <em>固定套路</em>,<br>
-      下次遇到同类问题,一键调用,不用重复教。
-    </div>
-    <div class="card-row cols-2" style="margin-top: 32px;">
-      <div class="card">
-        <div class="tag">我的 Skill 1</div>
-        <h3>SECS log 分析</h3>
-        <p>输入:log 文件路径 + 时间范围 → 输出:alarm 统计 + 异常时间点 + 可能原因</p>
-      </div>
-      <div class="card c-cyan">
-        <div class="tag">我的 Skill 2</div>
-        <h3>drv 测试文档</h3>
-        <p>输入:drv 版本号 + 测试项 → 输出:标准测试报告模板,含 SECS 消息流</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ========== 20 MCP ========== -->
-<section class="slide">
-  <div class="slide-inner">
-    <div class="eyebrow">MCP</div>
-    <h2 class="title">AI 的 <span class="em">USB 接口</span></h2>
-    <div class="big-quote">
-      MCP = 让 AI 能 <em>连接外部工具</em> 的标准协议,<br>
-      就像 USB 让电脑能连各种外设。
-    </div>
-    <div class="card-row cols-3" style="margin-top: 32px;">
-      <div class="card">
-        <div class="tag">MCP 1</div>
-        <h3>文件系统</h3>
-        <p>AI 直接读你电脑上的 log、文档,不用复制粘贴</p>
-      </div>
-      <div class="card c-cyan">
-        <div class="tag">MCP 2</div>
-        <h3>数据库</h3>
-        <p>AI 直接查 MES 数据库,取 SPC 数据</p>
-      </div>
-      <div class="card c-orange">
-        <div class="tag">MCP 3</div>
-        <h3>API</h3>
-        <p>AI 调用 fab 内部 API,比如 RCMS 查询</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ========== 21 Team Loop ========== -->
-<section class="slide">
-  <div class="slide-inner">
-    <div class="eyebrow">Team Loop</div>
-    <h2 class="title">AI 的 <span class="em">PDCA</span></h2>
-    <div class="big-quote">
-      Plan → Do → Check → Act,<br>
-      AI 也能 <em>自我迭代</em>,一次比一次做得好。
-    </div>
-    <div class="steps" style="margin-top: 32px;">
-      <div class="step">
-        <div class="step-num">PLAN</div>
-        <h4>定计划</h4>
-        <p>分析任务,拆解步骤</p>
-      </div>
-      <div class="step-arrow">→</div>
-      <div class="step">
-        <div class="step-num">DO</div>
-        <h4>执行</h4>
-        <p>调用工具,跑流程</p>
-      </div>
-      <div class="step-arrow">→</div>
-      <div class="step">
-        <div class="step-num">CHECK</div>
-        <h4>验证</h4>
-        <p>检查结果是否符合预期</p>
-      </div>
-      <div class="step-arrow">→</div>
-      <div class="step">
-        <div class="step-num">ACT</div>
-        <h4>优化</h4>
-        <p>记录经验,下次改进</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ========== 22 Static / Sub-static ========== -->
-<section class="slide">
-  <div class="slide-inner">
-    <div class="eyebrow">Static / Sub-static</div>
-    <h2 class="title">AI 的 <span class="em">记忆</span> 和 <span class="em">笔记</span></h2>
-    <div class="card-row cols-2">
-      <div class="card">
-        <div class="tag">Static</div>
-        <h3>长期记忆</h3>
-        <p>跨会话记住的东西:你的代码风格、fab 的命名规范、常用的 SECS 消息格式</p>
-        <div class="meta">类似:老师傅的经验</div>
-      </div>
-      <div class="card c-cyan">
-        <div class="tag">Sub-static</div>
-        <h3>临时笔记</h3>
-        <p>单次会话记住的东西:今天查的 alarm、正在改的 drv 版本、刚读的 spec 章节</p>
-        <div class="meta">类似:便签纸</div>
-      </div>
-    </div>
-    <p class="sub" style="margin-top: 24px;">用好 Static,AI 会越来越懂你;用好 Sub-static,单次任务不会丢上下文</p>
-  </div>
-</section>
-
-<!-- ========== PART 05 ========== -->
-<section class="slide center-stage">
-  <div class="slide-inner">
-    <div class="eyebrow">PART 05</div>
-    <h1 class="title">三个 <span class="em">真实场景</span><br>我是怎么用的</h1>
-    <p class="sub">不吹概念,直接看我每天怎么用这三套工具</p>
-  </div>
-</section>
-
-<!-- ========== 24 场景 1: log 检索 ========== -->
-<section class="slide">
-  <div class="slide-inner">
-    <div class="eyebrow">场景 1</div>
-    <h2 class="title">查 alarm:从 <span class="em">30 分钟</span> 到 <span class="em">3 分钟</span></h2>
-    <table class="tbl">
-      <thead>
-        <tr><th>步骤</th><th>以前</th><th>现在</th></tr>
-      </thead>
-      <tbody>
-        <tr><td>定位 log</td><td>ECS 里翻目录,找对应时间段</td><td>告诉 AI 机台号 + 时间,自动定位</td></tr>
-        <tr><td>读 log</td><td>肉眼扫,找 ERROR 关键字</td><td>AI 解析 SECS 消息,提取 alarm code</td></tr>
-        <tr><td>分析</td><td>凭经验猜可能原因</td><td>AI 对比历史 alarm,给出概率排序</td></tr>
-        <tr><td>记录</td><td>手动写进履历</td><td>AI 生成标准格式,一键存档</td></tr>
-      </tbody>
-    </table>
-    <p class="sub" style="margin-top: 24px;">上周 ETCH-03 报 S6F11 timeout,以前要查半小时,现在 3 分钟定位到 HSMS 连接问题</p>
-  </div>
-</section>
-
-<!-- ========== 25 场景 2: Skill 写文档 ========== -->
-<section class="slide">
-  <div class="slide-inner">
-    <div class="eyebrow">场景 2</div>
-    <h2 class="title">写测试文档:从 <span class="em">2 小时</span> 到 <span class="em">10 分钟</span></h2>
-    <div class="steps">
-      <div class="step">
-        <div class="step-num">以前</div>
-        <h4>复制旧模板</h4>
-        <p>找上次的测试报告</p>
-      </div>
-      <div class="step-arrow">→</div>
-      <div class="step">
-        <div class="step-num">改</div>
-        <h4>手动改版本号</h4>
-        <p>改 drv 版本、日期、测试项</p>
-      </div>
-      <div class="step-arrow">→</div>
-      <div class="step">
-        <div class="step-num">补</div>
-        <h4>补 SECS 消息流</h4>
-        <p>对照 spec 手打</p>
-      </div>
-      <div class="step-arrow">→</div>
-      <div class="step">
-        <div class="step-num">现在</div>
-        <h4>一键生成</h4>
-        <p>Skill 输入版本号,自动输出</p>
-      </div>
-    </div>
-    <p class="sub" style="margin-top: 24px;">我的 "drv 测试文档" Skill 已经跑了 20+ 次,每次省 1.5 小时</p>
-  </div>
-</section>
-
-<!-- ========== 26 场景 3: 跨区答疑 ========== -->
-<section class="slide">
-  <div class="slide-inner">
-    <div class="eyebrow">场景 3</div>
-    <h2 class="title">跨区问题:从 <span class="em">拉会一周</span> 到 <span class="em">当场解决</span></h2>
+    <div class="eyebrow">最常被问的问题</div>
+    <h2 class="title">DSH 上练好的东西,<br>能搬到 <span class="em">Copilot</span> 用吗?</h2>
     <div class="card-row cols-2">
       <div class="card c-red">
-        <div class="tag">以前</div>
-        <h3>薄膜区报 recipe 错</h3>
-        <p>蚀刻区查 log → 怀疑是上游问题 → 拉黄光区开会 → 再拉薄膜区确认 → 一周过去</p>
-        <div class="meta">跨区协作的常态</div>
+        <div class="tag">不能迁移</div>
+        <h3>模型本身的"记忆"</h3>
+        <p>你在 DSH 聊出来的上下文、它对你口味的适应,都锁在 DSH 里,模型权重你拿不走</p>
+        <div class="meta">就像你在 A 厂培训的产线经验,不会自动装进 B 厂的机台</div>
       </div>
       <div class="card c-green">
-        <div class="tag">现在</div>
-        <h3>AI 统一看三区 log</h3>
-        <p>AI 同时读蚀刻、薄膜、黄光的 ECS log,时间轴对齐,当场指出是薄膜区 recipe 参数下发延迟</p>
-        <div class="meta">30 分钟定位根因</div>
+        <div class="tag">可以迁移</div>
+        <h3>你沉淀下来的"文本资产"</h3>
+        <p>Prompt 模板、Skill 文档、规则文件(rules)、SOP 流程 —— 都是纯文本,复制过去就能用</p>
+        <div class="meta">Skill 写在 md 文件里,Copilot / DSH / Codex 都认</div>
       </div>
     </div>
+    <p class="sub" style="margin-top: 32px;">结论:<strong style="color: var(--acc);">模型不通用,但"你教 AI 的方法"通用</strong>。把经验写成文本文件,而不是留在某个工具的聊天记录里</p>
   </div>
 </section>
 
-<!-- ========== PART 06 ========== -->
+<!-- ========== 协同数据流 co-flow ========== -->
+<section class="slide">
+  <div class="slide-inner">
+    <div class="eyebrow">一个真实工作流</div>
+    <h2 class="title">新机型 drv 开发,<span class="em">三件套接力</span></h2>
+    <div class="co-flow">
+      <div class="co-col">
+        <h4>第 1 棒 · DSH</h4>
+        <ul>
+          <li><strong>读 spec:</strong>喂入新机型的 SECS 文档</li>
+          <li><strong>出摘要:</strong>提取必须实现的消息清单</li>
+          <li><strong>产物:</strong>一份《消息实现清单.md》</li>
+        </ul>
+      </div>
+      <div class="co-arrow">
+        →
+        <div class="co-label">清单交给<br>IDE</div>
+      </div>
+      <div class="co-col c-cyan">
+        <h4>第 2 棒 · Copilot</h4>
+        <ul>
+          <li><strong>照着清单写:</strong>逐条补全 SxFy 函数</li>
+          <li><strong>边写边问:</strong>异常分支怎么处理</li>
+          <li><strong>产物:</strong>drv.dll 源码 + 单元测试</li>
+        </ul>
+      </div>
+      <div class="co-arrow">
+        →
+        <div class="co-label">代码进内网<br>离线验证</div>
+      </div>
+      <div class="co-col c-orange">
+        <h4>第 3 棒 · Codex</h4>
+        <ul>
+          <li><strong>造测试数据:</strong>模拟 SECS 消息流</li>
+          <li><strong>批量回归:</strong>跑历史 log 验证兼容</li>
+          <li><strong>产物:</strong>测试报告 + 上线 checklist</li>
+        </ul>
+      </div>
+    </div>
+    <p class="sub" style="margin-top: 24px;">接力逻辑:<strong style="color: var(--acc);">读文档用 DSH,写代码用 Copilot,离线验证用 Codex</strong> —— 各干各最擅长的</p>
+  </div>
+</section>
+
+<!-- ========== Dify / N8N ========== -->
+<section class="slide">
+  <div class="slide-inner">
+    <div class="eyebrow">公司还有两座平台</div>
+    <h2 class="title">Dify / N8N:<span class="em">不写代码</span> 也能攒 AI 流程</h2>
+    <div class="card-row cols-2">
+      <div class="card c-purple">
+        <div class="tag">Dify 是什么</div>
+        <h3>拖拽式 AI 应用工厂</h3>
+        <p>拖几个框就能攒出一个"AI 问答机器人":接知识库、接大模型、发布成网页。适合给全组做一个"EAP 知识问答助手"</p>
+        <div class="meta">类比:fab 里的标准 recipe 模板,改改参数就能跑</div>
+      </div>
+      <div class="card c-green">
+        <div class="tag">N8N 是什么</div>
+        <h3>拖拽式自动化流水线</h3>
+        <p>把"收邮件 → 解析附件 → 调 AI 总结 → 发到群里"这种跨系统流程,用节点连起来定时跑。适合做"每日 alarm 自动日报"</p>
+        <div class="meta">类比:fab 里的自动搬送线,把站点一个个串起来</div>
+      </div>
+    </div>
+    <p class="sub" style="margin-top: 32px;">分工:<strong style="color: var(--acc);">Copilot/DSH/Codex 是"我个人"的工具,Dify/N8N 是"全组共用"的流水线</strong> —— 个人的 Skill 跑顺了,就可以搬到 Dify/N8N 上让所有人用</p>
+  </div>
+</section>
+
+<!-- ========== PART 05 EAP 落地 ========== -->
 <section class="slide center-stage">
   <div class="slide-inner">
-    <div class="eyebrow">PART 06</div>
-    <h1 class="title">EAP 的 <span class="em">6 大模块</span><br>AI 能插哪里</h1>
-    <p class="sub">回到我们的本职工作,看看每个环节怎么用 AI 提效</p>
+    <div class="eyebrow">PART 05 · EAP 落地</div>
+    <h1 class="title">回到 <span class="em">本职工作</span>,<br>每个环节怎么插 AI</h1>
+    <p class="sub">概念和工具都讲完了,落回蚀刻区 EAP 的 6 大模块</p>
   </div>
 </section>
 
-<!-- ========== 28 6 大模块 ========== -->
+<!-- ========== 6 大模块 ========== -->
 <section class="slide">
   <div class="slide-inner">
     <div class="eyebrow">EAP 6 大模块</div>
@@ -1226,28 +1654,28 @@ html, body {
   </div>
 </section>
 
-<!-- ========== 29 AI 介入对比 ========== -->
+<!-- ========== 模块 × 工具矩阵 ========== -->
 <section class="slide">
   <div class="slide-inner">
-    <div class="eyebrow">AI 介入对比</div>
-    <h2 class="title">每个模块,<span class="em">前后对比</span></h2>
+    <div class="eyebrow">模块 × 工具矩阵</div>
+    <h2 class="title">哪个模块,用 <span class="em">哪把刀</span></h2>
     <table class="tbl">
       <thead>
-        <tr><th>模块</th><th>以前</th><th>现在</th><th>省多少时间</th></tr>
+        <tr><th>模块</th><th>主力工具</th><th>配套做法</th><th>省时</th></tr>
       </thead>
       <tbody>
-        <tr><td>drv 开发</td><td>对照 spec 手打,调试靠猜</td><td>Copilot 补全 + AI 解读 spec</td><td class="yes">50%</td></tr>
-        <tr><td>ECS 运维</td><td>肉眼盯消息,alarm 靠经验</td><td>AI 监控异常模式,提前预警</td><td class="yes">40%</td></tr>
-        <tr><td>log 分析</td><td>翻目录、grep、猜原因</td><td>AI 解析 + 历史对比 + 根因排序</td><td class="yes">70%</td></tr>
-        <tr><td>MES 对接</td><td>手动对报工,Excel 核对</td><td>AI 自动对账,异常高亮</td><td class="yes">60%</td></tr>
-        <tr><td>文档编写</td><td>复制模板,手动改</td><td>Skill 一键生成,自动填版本</td><td class="yes">80%</td></tr>
-        <tr><td>跨区协作</td><td>拉会、邮件、电话</td><td>AI 统一读三区 log,当场定位</td><td class="yes">70%</td></tr>
+        <tr><td>drv 开发</td><td>Copilot</td><td>DSH 先读 spec 出清单,Copilot 照清单补全</td><td class="yes">50%</td></tr>
+        <tr><td>ECS 运维</td><td>Copilot + N8N</td><td>N8N 定时巡 log,异常自动推消息</td><td class="yes">40%</td></tr>
+        <tr><td>log 分析</td><td>Codex + Skill</td><td>内网 Codex 批量解析,Skill 固化解读套路</td><td class="yes">70%</td></tr>
+        <tr><td>MES 对接</td><td>Codex</td><td>离线脚本自动对账,异常高亮</td><td class="yes">60%</td></tr>
+        <tr><td>文档编写</td><td>DSH + Skill</td><td>Skill 一键生成测试报告,DSH 润色总结</td><td class="yes">80%</td></tr>
+        <tr><td>跨区协作</td><td>Dify</td><td>全组共用的知识问答助手,新人先问它</td><td class="yes">70%</td></tr>
       </tbody>
     </table>
   </div>
 </section>
 
-<!-- ========== 30 5 个 Skill 范例 ========== -->
+<!-- ========== 5 个 Skill 范例 ========== -->
 <section class="slide">
   <div class="slide-inner">
     <div class="eyebrow">5 个 Skill 范例</div>
@@ -1282,7 +1710,7 @@ html, body {
   </div>
 </section>
 
-<!-- ========== 31 前后对比大数字 ========== -->
+<!-- ========== 前后对比大数字 ========== -->
 <section class="slide center-stage">
   <div class="slide-inner">
     <div class="eyebrow">一年下来</div>
@@ -1308,20 +1736,144 @@ html, body {
   </div>
 </section>
 
-<!-- ========== PART 07 ========== -->
+<!-- ========== PART 06 自填案例 ========== -->
 <section class="slide center-stage">
   <div class="slide-inner">
-    <div class="eyebrow">PART 07</div>
-    <h1 class="title">你可以 <span class="em">带走</span><br>的三件事</h1>
-    <p class="sub">听完这堂课,明天就能开始做的</p>
+    <div class="eyebrow">PART 06 · 自填案例</div>
+    <h1 class="title">轮到你了,<br>把 <span class="em">你的案例</span> 填进来</h1>
+    <p class="sub">下面 4 页是空白模板 —— 照着前面讲的步骤,把你自己的实践填进去</p>
   </div>
 </section>
 
-<!-- ========== 33 三件事 ========== -->
+<!-- ========== 自填 1: drv 开发 ========== -->
 <section class="slide">
   <div class="slide-inner">
-    <div class="eyebrow">三件事</div>
-    <h2 class="title">明天 <span class="em">上班</span> 就能做</h2>
+    <div class="eyebrow">自填案例 1</div>
+    <h2 class="title">我的 <span class="em">drv 开发</span> 实践</h2>
+    <div class="fill-blank">
+      <div class="fb-tag">填写指引</div>
+      <h3>按"PART 04 接力流"填:DSH 读 spec → Copilot 写码 → Codex 验证</h3>
+      <p class="fb-hint">提示:写清楚 <strong>机型 / 用了哪些消息 / 卡在哪一步 / AI 怎么帮你过的 / 省了多少时间</strong></p>
+      <div class="fb-fields">
+        <div class="fb-field">
+          <div class="fb-label">任务背景</div>
+          <div class="fb-line">例:XX 机型 drv 新开发,需要实现 S1/S2/S6 系列消息…</div>
+        </div>
+        <div class="fb-field">
+          <div class="fb-label">DSH 干了什么</div>
+          <div class="fb-line">例:喂入 200 页 spec,提取出 23 条必实现消息…</div>
+        </div>
+        <div class="fb-field">
+          <div class="fb-label">Copilot 干了什么</div>
+          <div class="fb-line">例:按清单补全函数体,异常分支边写边问…</div>
+        </div>
+        <div class="fb-field">
+          <div class="fb-label">结果与省时</div>
+          <div class="fb-line">例:原定 5 天,实际 2.5 天,测试一次通过…</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== 自填 2: log 分析 ========== -->
+<section class="slide">
+  <div class="slide-inner">
+    <div class="eyebrow">自填案例 2</div>
+    <h2 class="title">我的 <span class="em">log 分析</span> 实践</h2>
+    <div class="fill-blank">
+      <div class="fb-tag">填写指引</div>
+      <h3>按"SECS log 分析 Skill"的思路填:输入 → 步骤 → 输出</h3>
+      <p class="fb-hint">提示:写清楚 <strong>什么 alarm / 以前怎么查 / 现在 AI 怎么查 / 定位了什么根因</strong></p>
+      <div class="fb-fields">
+        <div class="fb-field">
+          <div class="fb-label">问题现象</div>
+          <div class="fb-line">例:ETCH-XX 偶发 S6F11 timeout,无规律…</div>
+        </div>
+        <div class="fb-field">
+          <div class="fb-label">以前的查法</div>
+          <div class="fb-line">例:翻 3 天 log,肉眼找 ERROR,耗时 X 小时…</div>
+        </div>
+        <div class="fb-field">
+          <div class="fb-label">现在 AI 怎么查</div>
+          <div class="fb-line">例:Codex 批量解析 3 个月 log,对比历史 alarm…</div>
+        </div>
+        <div class="fb-field">
+          <div class="fb-label">根因与省时</div>
+          <div class="fb-line">例:定位 HSMS 心跳间隔配置问题,X 分钟搞定…</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== 自填 3: 文档编写 ========== -->
+<section class="slide">
+  <div class="slide-inner">
+    <div class="eyebrow">自填案例 3</div>
+    <h2 class="title">我的 <span class="em">文档编写</span> 实践</h2>
+    <div class="fill-blank">
+      <div class="fb-tag">填写指引</div>
+      <h3>把一份重复写的文档,做成 Skill</h3>
+      <p class="fb-hint">提示:写清楚 <strong>什么文档 / 以前怎么写 / Skill 的输入输出 / 复用了几次</strong></p>
+      <div class="fb-fields">
+        <div class="fb-field">
+          <div class="fb-label">文档类型</div>
+          <div class="fb-line">例:drv 测试报告 / 机台履历 / 交接文档…</div>
+        </div>
+        <div class="fb-field">
+          <div class="fb-label">以前的写法</div>
+          <div class="fb-line">例:复制旧模板,手动改版本号,2 小时一份…</div>
+        </div>
+        <div class="fb-field">
+          <div class="fb-label">Skill 设计</div>
+          <div class="fb-line">例:输入版本号 + 测试项 → 输出标准 md 报告…</div>
+        </div>
+        <div class="fb-field">
+          <div class="fb-label">复用情况</div>
+          <div class="fb-line">例:已跑 X 次,每次省 X 小时,全组在用…</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== 自填 4: 跨区协作 / 其他 ========== -->
+<section class="slide">
+  <div class="slide-inner">
+    <div class="eyebrow">自填案例 4</div>
+    <h2 class="title">我的 <span class="em">跨区协作</span> / 自由发挥</h2>
+    <div class="fill-blank">
+      <div class="fb-tag">填写指引</div>
+      <h3>任何你觉得"AI 帮到我"的场景都可以填</h3>
+      <p class="fb-hint">提示:跨区问题、MES 对账、ECS 运维、带新人… <strong>讲清"以前 vs 现在"就有说服力</strong></p>
+      <div class="fb-fields">
+        <div class="fb-field">
+          <div class="fb-label">场景描述</div>
+          <div class="fb-line">例:薄膜区报 recipe 异常,怀疑蚀刻上游…</div>
+        </div>
+        <div class="fb-field">
+          <div class="fb-label">以前的痛点</div>
+          <div class="fb-line">例:拉三区开会,邮件来回,一周才定位…</div>
+        </div>
+        <div class="fb-field">
+          <div class="fb-label">AI 怎么介入</div>
+          <div class="fb-line">例:AI 同时读三区 log,时间轴对齐…</div>
+        </div>
+        <div class="fb-field">
+          <div class="fb-label">结果</div>
+          <div class="fb-line">例:30 分钟定位根因,当场给结论…</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== 行动页 ========== -->
+<section class="slide">
+  <div class="slide-inner">
+    <div class="eyebrow">行动</div>
+    <h2 class="title">明天 <span class="em">上班</span> 就能做的三件事</h2>
     <div class="card-row cols-3">
       <div class="card">
         <div class="tag">第 1 件</div>
@@ -1342,35 +1894,7 @@ html, body {
         <div class="meta">难度:中 | 收益:长期</div>
       </div>
     </div>
-  </div>
-</section>
-
-<!-- ========== 34 持续分享 ========== -->
-<section class="slide">
-  <div class="slide-inner">
-    <div class="eyebrow">持续分享</div>
-    <h2 class="title">一个人的 AI 是 <span class="em">工具</span>,<br>一群人的 AI 是 <span class="em">资产</span></h2>
-    <div class="list-line">
-      <div class="num">1</div>
-      <div>
-        <h4>Skill 共享库</h4>
-        <p>把每个人写的 Skill 集中管理,新人入职就能用</p>
-      </div>
-    </div>
-    <div class="list-line">
-      <div class="num">2</div>
-      <div>
-        <h4>每周 15 分钟分享</h4>
-        <p>轮值分享一个 AI 使用技巧,不用准备 PPT,口头讲就行</p>
-      </div>
-    </div>
-    <div class="list-line">
-      <div class="num">3</div>
-      <div>
-        <h4>问题收集表</h4>
-        <p>把大家遇到的 AI 问题收集起来,我统一解答或找资源</p>
-      </div>
-    </div>
+    <p class="sub" style="margin-top: 32px;">跑顺了之后,把 Skill 搬到 <strong style="color: var(--acc);">Dify / N8N</strong>,让全组都能用 —— 一个人的 AI 是工具,一群人的 AI 是资产</p>
   </div>
 </section>
 
@@ -1396,7 +1920,7 @@ html, body {
   <button onclick="toggleFullscreen()">全屏</button>
   <button onclick="window.print()">打印 / 导出 PDF</button>
 </div>
-<div class="page-num" id="pageNum">1 / 35</div>
+<div class="page-num" id="pageNum">1 / 39</div>
 
 <script>
 const slides = document.querySelectorAll('.slide');
